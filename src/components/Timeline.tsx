@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { GraduationCap, Code2, Layers, Sparkles, Terminal, Cloud } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -58,61 +59,129 @@ const milestones: Milestone[] = [
 ];
 
 const Timeline = () => {
-  const ref = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+  const fillLineRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from("[data-timeline-heading]", {
-        y: 30,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ref.current, start: "top 80%", toggleActions: "restart none none reverse" },
-      });
+      // Section header animation
+      gsap.fromTo(
+        "[data-timeline-heading]",
+        { y: 30, opacity: 0, filter: "blur(8px)" },
+        {
+          y: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        }
+      );
 
-      gsap.from("[data-timeline-item]", {
-        x: (i) => (i % 2 === 0 ? -60 : 60),
-        opacity: 0,
-        duration: 0.9,
-        stagger: 0.15,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ref.current, start: "top 75%", toggleActions: "restart none none reverse" },
-      });
+      // Timeline items animation - alternating from left/right
+      gsap.fromTo(
+        "[data-timeline-item]",
+        { x: (i) => (i % 2 === 0 ? -60 : 60), opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.9,
+          stagger: 0.15,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 70%",
+          },
+        }
+      );
 
-      gsap.from("[data-timeline-line]", {
-        scaleY: 0,
+      // Line fill animation - fills with violet gradient as user scrolls
+      gsap.fromTo(
+        fillLineRef.current,
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          duration: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 60%",
+            end: "bottom 40%",
+            scrub: 1,
+          },
+        }
+      );
+
+      // Dots pulse animation
+      gsap.to("[data-timeline-dot]", {
+        boxShadow: "0 0 20px hsla(260, 70%, 60%, 0.8)",
         duration: 1.5,
-        ease: "power2.out",
-        transformOrigin: "top",
-        scrollTrigger: { trigger: ref.current, start: "top 80%", toggleActions: "restart none none reverse" },
+        repeat: -1,
+        yoyo: true,
+        stagger: 0.2,
+        ease: "power1.inOut",
       });
-    }, ref);
+    }, sectionRef);
+
     return () => ctx.revert();
   }, []);
 
   return (
-    <section id="journey" ref={ref} className="py-24 px-6">
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-14" data-timeline-heading>
-          <h2 className="font-mono text-sm text-primary mb-2">05.</h2>
-          <h3 className="text-3xl font-bold mb-2">Developer Journey</h3>
-          <div className="h-[2px] w-16 bg-primary mb-4 origin-left" />
+    <section id="journey" ref={sectionRef} className="relative py-24 px-4 sm:px-6 overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 right-0 w-64 h-64 bg-violet-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 left-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl" />
+      </div>
+
+      <div className="mx-auto max-w-5xl relative">
+        {/* Section Header */}
+        <div className="mb-16" data-timeline-heading>
+          <Badge
+            variant="outline"
+            className="mb-4 px-4 py-1.5 border-violet-500/40 text-violet-400 bg-violet-500/5"
+          >
+            MY JOURNEY
+          </Badge>
+          <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+            Developer <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-violet-500 to-pink-500">Journey</span>
+          </h2>
           <p className="text-muted-foreground max-w-lg">
             Key milestones that shaped who I am as an engineer.
           </p>
         </div>
 
+        {/* Timeline Container */}
         <div className="relative">
-          {/* Vertical line */}
+          {/* Background line (empty) */}
           <div
-            data-timeline-line
-            className="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary via-accent to-primary/20"
+            ref={lineRef}
+            className="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-white/20 via-white/10 to-white/5"
           />
 
-          <div className="space-y-10">
+          {/* Filled line (scroll animated) */}
+          <div
+            className="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[3px] origin-top overflow-hidden"
+          >
+            <div
+              ref={fillLineRef}
+              className="absolute inset-0 origin-top"
+              style={{
+                background: "linear-gradient(180deg, hsl(180, 80%, 50%) 0%, hsl(260, 70%, 60%) 50%, hsl(280, 80%, 50%) 100%)",
+              }}
+            />
+          </div>
+
+          {/* Timeline Items */}
+          <div className="space-y-12">
             {milestones.map((m, i) => {
               const isLeft = i % 2 === 0;
               const Icon = m.icon;
+
               return (
                 <div
                   key={m.title}
@@ -121,24 +190,54 @@ const Timeline = () => {
                     isLeft ? "md:flex-row" : "md:flex-row-reverse"
                   }`}
                 >
-                  {/* Dot */}
+                  {/* Timeline Dot */}
                   <div className="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-2 md:top-1/2 md:-translate-y-1/2 z-10">
-                    <div className="h-4 w-4 rounded-full bg-primary shadow-[0_0_12px_hsl(var(--primary))] ring-4 ring-background" />
+                    <div
+                      data-timeline-dot
+                      className="h-4 w-4 rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 ring-4 ring-background transition-all duration-300"
+                    />
                   </div>
 
-                  {/* Card */}
-                  <div className={`ml-12 md:ml-0 md:w-1/2 ${isLeft ? "md:pr-12 md:text-right" : "md:pl-12"}`}>
-                    <div className="rounded-xl border border-border bg-card/60 backdrop-blur-sm p-5 sm:p-6 transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
-                      <div className={`flex items-center gap-2 mb-2 ${isLeft ? "md:justify-end" : ""}`}>
-                        <Icon className="h-4 w-4 text-primary" />
-                        <span className="font-mono text-xs text-primary">{m.year}</span>
+                  {/* Content Card */}
+                  <div
+                    className={`ml-12 md:ml-0 md:w-1/2 ${
+                      isLeft ? "md:pr-12 md:text-right" : "md:pl-12"
+                    }`}
+                  >
+                    <div className="group relative rounded-2xl border border-white/10 bg-card/60 backdrop-blur-xl p-6 transition-all duration-500 hover:border-violet-500/50 hover:shadow-2xl hover:shadow-violet-500/10 overflow-hidden">
+                      {/* Glow effect on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                      {/* Content */}
+                      <div className="relative">
+                        <div
+                          className={`flex items-center gap-2 mb-3 ${
+                            isLeft ? "md:justify-end" : ""
+                          }`}
+                        >
+                          <Icon className="h-4 w-4 text-violet-400" />
+                          <span className="font-mono text-xs text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded-full">
+                            {m.year}
+                          </span>
+                        </div>
+                        <h4 className="text-lg font-bold mb-2 group-hover:text-violet-400 transition-colors">
+                          {m.title}
+                        </h4>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {m.description}
+                        </p>
                       </div>
-                      <h4 className="text-lg font-bold mb-2">{m.title}</h4>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{m.description}</p>
+
+                      {/* Decorative corner */}
+                      <div className="absolute bottom-0 right-0 w-16 h-16 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <svg viewBox="0 0 50 50" className="w-full h-full text-violet-400">
+                          <circle cx="40" cy="40" r="30" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                        </svg>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Spacer for other side */}
+                  {/* Spacer */}
                   <div className="hidden md:block md:w-1/2" />
                 </div>
               );

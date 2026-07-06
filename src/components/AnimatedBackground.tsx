@@ -1,144 +1,171 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Smooth parallax gradient background — all elements move together
- * as you scroll, creating a cohesive floating effect. Colors are
- * dev-focused: cool blues, teals, and subtle purples.
+ * Futuristic premium gradient background with evening winter theme.
+ * Deep blues, indigos, and violet glows with floating orbs.
  */
 const AnimatedBackground = () => {
-  const layerRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const orbsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  // Smooth parallax — all layers move upward together at different speeds
   useEffect(() => {
-    let ticking = false;
-    let lastScrollY = 0;
-
-    const onScroll = () => {
-      lastScrollY = window.scrollY;
-      if (ticking) return;
-      ticking = true;
-
-      requestAnimationFrame(() => {
-        layerRefs.current.forEach((layer, i) => {
-          if (!layer) return;
-          // Each layer moves at a slightly different speed for depth
-          const speed = 0.08 + i * 0.03;
-          const y = lastScrollY * speed;
-          layer.style.transform = `translate3d(0, ${-y}px, 0)`;
-        });
-        ticking = false;
-      });
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    // An orbs floating animation
+    orbsRef.current.forEach((orb) => {
+      if (orb) {
+        const delay = Math.random() * 2;
+        const duration = 4 + Math.random() * 3;
+        orb.style.animationDelay = `${delay}s`;
+        orb.style.animationDuration = `${duration}s`;
+      }
+    });
   }, []);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-      {/* Base dark gradient — sweeps from dark to vivid purple/blue like the reference */}
+      {/* Base winter evening gradient - deep blues to violet */}
       <div
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(160deg, hsl(240, 15%, 3%) 0%, hsl(250, 20%, 6%) 30%, hsl(260, 35%, 12%) 55%, hsl(270, 50%, 20%) 75%, hsl(275, 70%, 30%) 90%, hsl(265, 80%, 38%) 100%)",
+          background: `
+            linear-gradient(
+              180deg,
+              hsl(220, 35%, 5%) 0%,
+              hsl(230, 40%, 8%) 15%,
+              hsl(240, 45%, 12%) 30%,
+              hsl(250, 50%, 15%) 45%,
+              hsl(260, 55%, 18%) 60%,
+              hsl(270, 60%, 12%) 80%,
+              hsl(220, 30%, 6%) 100%
+            )
+          `,
         }}
       />
 
-      {/* Layer 1 - Slow moving large blobs */}
+      {/* Aurora-like gradient overlay */}
       <div
-        ref={(el) => (layerRefs.current[0] = el)}
-        className="absolute inset-0 will-change-transform"
-      >
-        <div
-          className="absolute -top-[5%] -left-[10%] h-[600px] w-[600px] rounded-full blur-[120px] animate-blob-1"
-          style={{ background: "rgba(139, 92, 246, 0.18)" }}
-        />
-        <div
-          className="absolute top-[60%] -right-[5%] h-[550px] w-[550px] rounded-full blur-[110px] animate-blob-2"
-          style={{ background: "rgba(99, 102, 241, 0.15)" }}
-        />
-      </div>
-
-      {/* Layer 2 - Medium speed blobs */}
-      <div
-        ref={(el) => (layerRefs.current[1] = el)}
-        className="absolute inset-0 will-change-transform"
-      >
-        <div
-          className="absolute top-[20%] right-[15%] h-[500px] w-[500px] rounded-full blur-[100px] animate-blob-3"
-          style={{ background: "rgba(168, 85, 247, 0.14)" }}
-        />
-        <div
-          className="absolute top-[45%] left-[10%] h-[480px] w-[480px] rounded-full blur-[100px] animate-blob-4"
-          style={{ background: "rgba(79, 70, 229, 0.14)" }}
-        />
-        <div
-          className="absolute top-[80%] left-[30%] h-[500px] w-[500px] rounded-full blur-[110px] animate-blob-1"
-          style={{ background: "rgba(124, 58, 237, 0.12)" }}
-        />
-      </div>
-
-      {/* Layer 3 - Faster accent blobs */}
-      <div
-        ref={(el) => (layerRefs.current[2] = el)}
-        className="absolute inset-0 will-change-transform"
-      >
-        <div
-          className="absolute top-[10%] left-[40%] h-[350px] w-[350px] rounded-full blur-[80px] animate-blob-2"
-          style={{ background: "rgba(99, 102, 241, 0.1)" }}
-        />
-        <div
-          className="absolute top-[55%] right-[25%] h-[300px] w-[300px] rounded-full blur-[70px] animate-blob-4"
-          style={{ background: "rgba(139, 92, 246, 0.1)" }}
-        />
-        <div
-          className="absolute top-[85%] right-[10%] h-[400px] w-[400px] rounded-full blur-[90px] animate-blob-3"
-          style={{ background: "rgba(79, 70, 229, 0.1)" }}
-        />
-      </div>
-
-      {/* Subtle grid pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.015]"
+        className="absolute inset-0 opacity-40"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+          background: `
+            radial-gradient(
+              ellipse 80% 50% at 50% 0%,
+              hsl(200, 80%, 30%) 0%,
+              transparent 50%
+            ),
+            radial-gradient(
+              ellipse 60% 40% at 70% 20%,
+              hsl(260, 70%, 35%) 0%,
+              transparent 45%
+            ),
+            radial-gradient(
+              ellipse 50% 30% at 30% 30%,
+              hsl(220, 60%, 30%) 0%,
+              transparent 40%
+            )
+          `,
         }}
       />
 
-      {/* Noise texture overlay for depth */}
+      {/* Layer 1 - Large atmospheric orbs */}
+      <div className="absolute inset-0">
+        <div
+          ref={(el) => (orbsRef.current[0] = el)}
+          className="absolute top-[5%] left-[10%] w-[500px] h-[500px] rounded-full animate-blob-1"
+          style={{
+            background: "radial-gradient(circle, hsla(200, 80%, 60%, 0.15) 0%, transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
+        <div
+          ref={(el) => (orbsRef.current[1] = el)}
+          className="absolute top-[40%] right-[5%] w-[450px] h-[450px] rounded-full animate-blob-2"
+          style={{
+            background: "radial-gradient(circle, hsla(260, 70%, 55%, 0.12) 0%, transparent 70%)",
+            filter: "blur(70px)",
+          }}
+        />
+      </div>
+
+      {/* Layer 2 - Medium accent orbs */}
+      <div className="absolute inset-0">
+        <div
+          ref={(el) => (orbsRef.current[2] = el)}
+          className="absolute top-[60%] left-[30%] w-[400px] h-[400px] rounded-full animate-blob-3"
+          style={{
+            background: "radial-gradient(circle, hsla(220, 70%, 50%, 0.1) 0%, transparent 70%)",
+            filter: "blur(50px)",
+          }}
+        />
+        <div
+          ref={(el) => (orbsRef.current[3] = el)}
+          className="absolute top-[20%] right-[30%] w-[350px] h-[350px] rounded-full animate-blob-4"
+          style={{
+            background: "radial-gradient(circle, hsla(280, 60%, 50%, 0.1) 0%, transparent 70%)",
+            filter: "blur(55px)",
+          }}
+        />
+      </div>
+
+      {/* Layer 3 - Small neon accent orbs */}
+      <div className="absolute inset-0">
+        <div
+          ref={(el) => (orbsRef.current[4] = el)}
+          className="absolute top-[75%] right-[25%] w-[250px] h-[250px] rounded-full animate-blob-1"
+          style={{
+            background: "radial-gradient(circle, hsla(190, 90%, 60%, 0.12) 0%, transparent 70%)",
+            filter: "blur(40px)",
+          }}
+        />
+        <div
+          ref={(el) => (orbsRef.current[5] = el)}
+          className="absolute top-[85%] left-[15%] w-[300px] h-[300px] rounded-full animate-blob-2"
+          style={{
+            background: "radial-gradient(circle, hsla(250, 80%, 60%, 0.1) 0%, transparent 70%)",
+            filter: "blur(45px)",
+          }}
+        />
+      </div>
+
+      {/* Subtle grid pattern for depth */}
       <div
         className="absolute inset-0 opacity-[0.02]"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundImage: `
+            linear-gradient(rgba(100, 150, 255, 0.3) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(100, 150, 255, 0.3) 1px, transparent 1px)
+          `,
+          backgroundSize: "80px 80px",
         }}
       />
 
-      {/* Soft vignette */}
+      {/* Noise texture overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.015]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+        }}
+      />
+
+      {/* Vignette darkening edges */}
       <div
         className="absolute inset-0"
         style={{
-          background: "radial-gradient(ellipse at center, transparent 40%, hsl(240, 20%, 3%) 100%)",
+          background: "radial-gradient(ellipse at center, transparent 30%, hsl(220, 30%, 5%) 100%)",
         }}
       />
 
-      {/* Top edge glow */}
+      {/* Top edge glow - aurora-like */}
       <div
-        className="absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-[800px] rounded-full blur-[100px] opacity-30"
-        style={{ background: "rgba(139, 92, 246, 0.15)" }}
+        className="absolute -top-20 left-1/2 -translate-x-1/2 h-60 w-[900px] rounded-full blur-[100px] opacity-30"
+        style={{
+          background: "linear-gradient(180deg, hsla(200, 80%, 50%, 0.3) 0%, transparent 100%)",
+        }}
       />
 
-      {/* Bottom-right vivid glow to mimic reference image sweep */}
+      {/* Bottom accent glow */}
       <div
-        className="absolute bottom-0 right-0 h-[60vh] w-[60vw] rounded-full blur-[150px] opacity-40"
-        style={{ background: "radial-gradient(circle, hsl(280, 90%, 50%) 0%, hsl(260, 80%, 40%) 40%, transparent 70%)" }}
-      />
-
-      {/* Top-left blue accent glow */}
-      <div
-        className="absolute -top-[10%] -left-[5%] h-[50vh] w-[40vw] rounded-full blur-[130px] opacity-25"
-        style={{ background: "radial-gradient(circle, hsl(220, 80%, 50%) 0%, transparent 70%)" }}
+        className="absolute -bottom-20 right-0 w-[50vw] h-[40vh] rounded-full blur-[120px] opacity-20"
+        style={{
+          background: "radial-gradient(circle, hsla(260, 70%, 40%, 0.4) 0%, transparent 70%)",
+        }}
       />
     </div>
   );

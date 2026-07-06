@@ -1,40 +1,94 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { User, Code as Code2, Heart, Rocket, Star, GraduationCap, Cloud, Terminal, Cpu, GitBranch, Database, Layers, Zap, Globe } from "lucide-react";
+import { Code as Code2, Zap, Database, GitBranch, Layers, Terminal, Cpu, Award, Coffee, BookOpen, Globe } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const skillIcons = [
-  { name: "HTML5", icon: Globe },
-  { name: "CSS3", icon: Layers },
-  { name: "JavaScript", icon: Zap },
-  { name: "React", icon: Code2 },
-  { name: "Node.js", icon: Database },
-  { name: "Python", icon: Code2 },
-  { name: "Git", icon: GitBranch },
-  { name: "GSAP", icon: Rocket },
-];
+interface BentoSubItem {
+  name?: string;
+  label?: string;
+  icon: typeof Code2;
+}
 
-const highlights = [
-  { icon: GraduationCap, label: "B.Tech in Electronics" },
-  { icon: Code2, label: "Full Stack Developer" },
-  { icon: Zap, label: "AI Integration Expert" },
-  { icon: Cloud, label: "Cloud Architectures" },
+interface BentoItem {
+  id: number;
+  title: string;
+  description?: string;
+  size: string;
+  gradient: string;
+  borderColor: string;
+  iconColor: string;
+  items?: BentoSubItem[];
+}
+
+const bentoItems: BentoItem[] = [
+  {
+    id: 1,
+    title: "Full Stack Developer",
+    description: "A passionate developer building scalable web applications and seamless user experiences. I craft solutions from frontend to backend with modern technologies.",
+    size: "lg",
+    gradient: "from-cyan-500/20 to-blue-500/20",
+    borderColor: "border-cyan-500/30",
+    iconColor: "text-cyan-400",
+  },
+  {
+    id: 2,
+    title: "Tech Stack",
+    items: [
+      { name: "React", icon: Code2 },
+      { name: "Node.js", icon: Terminal },
+      { name: "TypeScript", icon: Layers },
+      { name: "Python", icon: Cpu },
+      { name: "MongoDB", icon: Database },
+      { name: "PostgreSQL", icon: Database },
+    ],
+    size: "md",
+    gradient: "from-violet-500/20 to-purple-500/20",
+    borderColor: "border-violet-500/30",
+    iconColor: "text-violet-400",
+  },
+  {
+    id: 3,
+    title: "AI Integration",
+    description: "Experienced in integrating AI/ML models and LLMs like Gemini into production applications for intelligent features.",
+    size: "md",
+    gradient: "from-blue-500/20 to-cyan-500/20",
+    borderColor: "border-blue-500/30",
+    iconColor: "text-blue-400",
+  },
+  {
+    id: 4,
+    title: "Highlights",
+    items: [
+      { label: "B.Tech Electronics", icon: BookOpen },
+      { label: "Cloud Architectures", icon: Globe },
+      { label: "Open Source", icon: GitBranch },
+      { label: "System Design", icon: Cpu },
+    ],
+    size: "md",
+    gradient: "from-emerald-500/20 to-teal-500/20",
+    borderColor: "border-emerald-500/30",
+    iconColor: "text-emerald-400",
+  },
+  {
+    id: 5,
+    title: "Always Learning",
+    description: "Driven by curiosity and a constant desire to explore new technologies, frameworks, and best practices in software engineering.",
+    size: "md",
+    gradient: "from-orange-500/20 to-amber-500/20",
+    borderColor: "border-orange-500/30",
+    iconColor: "text-orange-400",
+  },
 ];
 
 const About = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
-  const bioRef = useRef<HTMLDivElement>(null);
-  const skillsRef = useRef<HTMLDivElement>(null);
-  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Section header - blur to clear
+      // Section header animation
       gsap.fromTo(
         "[data-about-header]",
         { y: 40, opacity: 0, filter: "blur(10px)" },
@@ -47,80 +101,24 @@ const About = () => {
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top 80%",
-            toggleActions: "restart none none reverse",
           },
         }
       );
 
-      // Profile image - enter from left with lift effect
+      // Bento cards stagger animation
       gsap.fromTo(
-        imageRef.current,
-        { x: -80, opacity: 0, rotateY: 15 },
-        {
-          x: 0,
-          opacity: 1,
-          rotateY: 0,
-          duration: 1.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 75%",
-          },
-        }
-      );
-
-      // Bio text - staggered entrance
-      gsap.fromTo(
-        "[data-bio-line]",
-        { x: 40, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: bioRef.current,
-            start: "top 80%",
-          },
-        }
-      );
-
-      // Highlights - staggered icons
-      gsap.fromTo(
-        "[data-highlight]",
-        { y: 30, opacity: 0, scale: 0.9 },
+        "[data-bento-card]",
+        { y: 60, opacity: 0, scale: 0.95 },
         {
           y: 0,
           opacity: 1,
           scale: 1,
-          duration: 0.6,
+          duration: 0.8,
           stagger: 0.1,
-          ease: "back.out(1.5)",
+          ease: "power3.out",
           scrollTrigger: {
-            trigger: "[data-highlights]",
-            start: "top 85%",
-          },
-        }
-      );
-
-      // Skill icons - staggered pop-in
-      gsap.fromTo(
-        "[data-skill-icon]",
-        { scale: 0, opacity: 0, rotation: -20 },
-        {
-          scale: 1,
-          opacity: 1,
-          rotation: 0,
-          duration: 0.5,
-          stagger: {
-            each: 0.08,
-            from: "random",
-          },
-          ease: "back.out(2)",
-          scrollTrigger: {
-            trigger: skillsRef.current,
-            start: "top 85%",
+            trigger: sectionRef.current,
+            start: "top 70%",
           },
         }
       );
@@ -174,101 +172,155 @@ const About = () => {
           </p>
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-frac2 gap-12 items-center">
-          {/* Left - Profile Image with Glow */}
-          <div ref={imageRef} className="flex justify-center lg:justify-end">
-            <div className="relative group">
-              {/* Outer glow rings */}
-              <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-violet-500 opacity-30 blur-2xl group-hover:opacity-50 transition-opacity duration-700 animate-pulse" />
-              <div className="absolute -inset-2 rounded-full bg-gradient-to-r from-cyan-500/50 via-blue-500/50 to-violet-500/50 opacity-40 blur-xl" />
+        {/* Bento Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-[minmax(180px,auto)]">
+          {/* Card 01 - Large intro card */}
+          <div
+            data-bento-card
+            className={`lg:col-span-2 lg:row-span-2 relative group rounded-3xl overflow-hidden bg-gradient-to-br ${bentoItems[0].gradient} border ${bentoItems[0].borderColor} backdrop-blur-xl transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1`}
+          >
+            {/* Glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-              {/* Main image container */}
-              <div className="relative w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full overflow-hidden border-2 border-white/10 backdrop-blur-xl bg-card/50 group-hover:border-cyan-500/50 transition-all duration-500 group-hover:scale-105 group-hover:rotate-2">
-                {/* Inner gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-transparent to-violet-500/20" />
-
-                {/* Placeholder avatar */}
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-card to-secondary">
-                  <div className="relative">
-                    <User className="w-32 h-32 text-muted-foreground/40" />
-                    {/* Animated code symbols */}
-                    <div className="absolute -top-8 -right-8 text-2xl font-mono text-cyan-400/60 animate-pulse">{"{"}</div>
-                    <div className="absolute -bottom-8 -left-8 text-2xl font-mono text-violet-400/60 animate-pulse">{"}"}</div>
-                  </div>
+            <div className="relative p-8 h-full flex flex-col">
+              {/* Card number */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/30 to-blue-500/30 border border-cyan-500/20 flex items-center justify-center">
+                  <span className="text-sm font-mono font-bold text-cyan-400">01</span>
                 </div>
-
-                {/* Corner accents */}
-                <div className="absolute top-4 right-4 w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_15px_hsl(180,80%,50%)]" />
-                <div className="absolute bottom-4 left-4 w-3 h-3 rounded-full bg-violet-400 shadow-[0_0_15px_hsl(260,70%,60%)]" />
+                <Code2 className={`w-8 h-8 ${bentoItems[0].iconColor}`} />
               </div>
 
-              {/* Floating tech badges around image */}
-              <div className="absolute -top-4 -right-4 px-3 py-1.5 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-400 text-xs font-mono backdrop-blur-sm animate-bounce" style={{ animationDelay: "0s" }}>
-                React
+              {/* Content */}
+              <div className="flex-1 flex flex-col justify-center">
+                <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
+                  {bentoItems[0].title}
+                </h3>
+                <p className="text-muted-foreground text-lg leading-relaxed">
+                  {bentoItems[0].description}
+                </p>
               </div>
-              <div className="absolute -bottom-2 -left-6 px-3 py-1.5 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400 text-xs font-mono backdrop-blur-sm animate-bounce" style={{ animationDelay: "0.5s" }}>
-                Node.js
-              </div>
-              <div className="absolute top-1/2 -right-8 px-3 py-1.5 rounded-full bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-xs font-mono backdrop-blur-sm animate-bounce" style={{ animationDelay: "1s" }}>
-                AI
+
+              {/* Decorative element */}
+              <div className="absolute bottom-0 right-0 w-40 h-40 opacity-10 group-hover:opacity-20 transition-opacity">
+                <svg viewBox="0 0 100 100" className="w-full h-full text-cyan-400">
+                  <circle cx="80" cy="80" r="60" fill="none" stroke="currentColor" strokeWidth="0.3" />
+                  <circle cx="80" cy="80" r="40" fill="none" stroke="currentColor" strokeWidth="0.3" />
+                  <circle cx="80" cy="80" r="20" fill="none" stroke="currentColor" strokeWidth="0.3" />
+                </svg>
               </div>
             </div>
           </div>
 
-          {/* Right - Bio Content */}
-          <div ref={bioRef} className="space-y-6">
-            {/* Bio paragraphs */}
-            <div className="space-y-4">
-              <p data-bio-line className="text-lg text-foreground/90 leading-relaxed">
-                I'm a{" "}
-                <span className="font-semibold text-cyan-400">Full Stack Engineer</span> with a
-                passion for building seamless digital experiences. From elegant frontends to
-                robust backends, I craft solutions that scale.
-              </p>
-              <p data-bio-line className="text-muted-foreground leading-relaxed">
-                With a background in Electronics Engineering, I bring a unique perspective to
-                software development. I specialize in{" "}
-                <span className="text-blue-400">AI integration</span>,{" "}
-                <span className="text-violet-400">cloud architectures</span>, and creating
-                products that solve real-world problems.
-              </p>
-              <p data-bio-line className="text-muted-foreground leading-relaxed">
-                When I'm not coding, you'll find me exploring system internals, contributing
-                to open source, or diving into the latest tech innovations.
-              </p>
-            </div>
-
-            {/* Highlights pills */}
-            <div data-highlights className="flex flex-wrap gap-3">
-              {highlights.map((h, i) => (
-                <div
-                  key={i}
-                  data-highlight
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/60 border border-border/50 backdrop-blur-sm hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all duration-300"
-                >
-                  <h.icon className="h-4 w-4 text-primary" />
-                  <span className="text-sm text-foreground/80">{h.label}</span>
+          {/* Card 02 - Tech Stack */}
+          <div
+            data-bento-card
+            className={`lg:row-span-2 relative group rounded-3xl overflow-hidden bg-gradient-to-br ${bentoItems[1].gradient} border ${bentoItems[1].borderColor} backdrop-blur-xl transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1`}
+          >
+            <div className="relative p-6 h-full flex flex-col">
+              {/* Card number */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500/30 to-purple-500/30 border border-violet-500/20 flex items-center justify-center">
+                  <span className="text-xs font-mono font-bold text-violet-400">02</span>
                 </div>
-              ))}
-            </div>
+                <Layers className={`w-6 h-6 ${bentoItems[1].iconColor}`} />
+              </div>
 
-            {/* Skill icons grid */}
-            <div ref={skillsRef} className="pt-4">
-              <p className="text-sm text-muted-foreground mb-4">Technologies I work with:</p>
-              <div className="flex flex-wrap gap-3">
-                {skillIcons.map((skill, i) => (
+              {/* Content */}
+              <h3 className="text-xl font-bold text-foreground mb-4">{bentoItems[1].title}</h3>
+
+              <div className="grid grid-cols-2 gap-3 flex-1">
+                {bentoItems[1].items?.map((item, i) => (
                   <div
-                    key={skill.name}
-                    data-skill-icon
-                    className="group relative flex flex-col items-center gap-1"
+                    key={i}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-secondary/30 border border-white/5 hover:border-violet-500/30 hover:bg-violet-500/10 transition-all duration-300"
                   >
-                    <div className="w-12 h-12 rounded-xl bg-card/80 border border-border/50 flex items-center justify-center backdrop-blur-sm group-hover:border-cyan-500/50 group-hover:bg-cyan-500/10 group-hover:scale-110 transition-all duration-300 cursor-pointer">
-                      <skill.icon className="h-5 w-5 text-muted-foreground group-hover:text-cyan-400 transition-colors" />
-                    </div>
-                    <span className="text-[10px] text-muted-foreground/60 font-mono">{skill.name}</span>
+                    <item.icon className="w-4 h-4 text-violet-400" />
+                    <span className="text-sm font-mono text-muted-foreground">{item.name}</span>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 03 - AI Integration */}
+          <div
+            data-bento-card
+            className={`relative group rounded-3xl overflow-hidden bg-gradient-to-br ${bentoItems[2].gradient} border ${bentoItems[2].borderColor} backdrop-blur-xl transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1`}
+          >
+            <div className="relative p-6 h-full flex flex-col">
+              {/* Card number */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/30 to-cyan-500/30 border border-blue-500/20 flex items-center justify-center">
+                  <span className="text-xs font-mono font-bold text-blue-400">03</span>
+                </div>
+                <Zap className={`w-6 h-6 ${bentoItems[2].iconColor}`} />
+              </div>
+
+              {/* Content */}
+              <h3 className="text-lg font-bold text-foreground mb-2">{bentoItems[2].title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed flex-1">
+                {bentoItems[2].description}
+              </p>
+            </div>
+          </div>
+
+          {/* Card 04 - Highlights */}
+          <div
+            data-bento-card
+            className={`relative group rounded-3xl overflow-hidden bg-gradient-to-br ${bentoItems[3].gradient} border ${bentoItems[3].borderColor} backdrop-blur-xl transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1`}
+          >
+            <div className="relative p-6 h-full flex flex-col">
+              {/* Card number */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/30 to-teal-500/30 border border-emerald-500/20 flex items-center justify-center">
+                  <span className="text-xs font-mono font-bold text-emerald-400">04</span>
+                </div>
+                <Award className={`w-6 h-6 ${bentoItems[3].iconColor}`} />
+              </div>
+
+              {/* Content */}
+              <h3 className="text-lg font-bold text-foreground mb-3">{bentoItems[3].title}</h3>
+
+              <div className="flex flex-wrap gap-2">
+                {bentoItems[3].items?.map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary/30 border border-white/5 text-xs"
+                  >
+                    <item.icon className="w-3 h-3 text-emerald-400" />
+                    <span className="text-muted-foreground">{item.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 05 - Always Learning */}
+          <div
+            data-bento-card
+            className={`lg:col-span-2 relative group rounded-3xl overflow-hidden bg-gradient-to-br ${bentoItems[4].gradient} border ${bentoItems[4].borderColor} backdrop-blur-xl transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1`}
+          >
+            <div className="relative p-6 h-full flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              {/* Card number */}
+              <div className="flex items-center justify-between w-full sm:w-auto sm:flex-col gap-2">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500/30 to-amber-500/30 border border-orange-500/20 flex items-center justify-center">
+                  <span className="text-xs font-mono font-bold text-orange-400">05</span>
+                </div>
+                <Coffee className={`w-6 h-6 ${bentoItems[4].iconColor}`} />
+              </div>
+
+              {/* Content */}
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-foreground mb-1">{bentoItems[4].title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {bentoItems[4].description}
+                </p>
+              </div>
+
+              {/* Decorative code snippet */}
+              <div className="hidden lg:block absolute right-6 top-1/2 -translate-y-1/2 font-mono text-xs text-orange-400/40">
+                {"<learning />"}
               </div>
             </div>
           </div>

@@ -7,6 +7,7 @@ export interface Project {
   learned: string[];
   githubUrl: string;
   demoUrl?: string;
+  imageUrl: string;
 }
 
 export const projects: Project[] = [
@@ -29,8 +30,9 @@ export const projects: Project[] = [
       "Puppeteer-based PDF pipeline converting structured JSON to A4 resumes",
       "Layered backend architecture and 4-layer frontend pattern",
     ],
-    githubUrl: "https://github.com",
-    demoUrl: "https://example.com",
+    githubUrl: "https://github.com/IchigoAni-19/Resume-match-ai",
+    demoUrl: "https://resume-match-ai-lyart.vercel.app/",
+    imageUrl: "/images/projects/Resume-match-ai.png",
   },
   {
     name: "ThreadForge",
@@ -51,8 +53,30 @@ export const projects: Project[] = [
       "Implementing rollback mechanisms for credit reward systems",
       "End-to-end REST API integration between React and Express",
     ],
-    githubUrl: "https://github.com",
-    demoUrl: "https://example.com",
+    githubUrl: "https://github.com/IchigoAni-19/threadforge",
+    demoUrl: "https://threadforge-lemon.vercel.app/",
+    imageUrl: "/images/projects/ThreadForge.png",
+  },
+  {
+    name: "Task Score Master",
+    year: "2026",
+    description:
+      "A task and productivity management application with gamification elements, allowing users to track tasks, earn scores, and compete on leaderboards.",
+    features: [
+      "Task management with priority levels",
+      "Score-based gamification system",
+      "Leaderboard and achievements",
+      "Real-time updates",
+    ],
+    techStack: ["React.js", "TypeScript", "Node.js", "PostgreSQL", "Tailwind CSS"],
+    learned: [
+      "Gamification design patterns",
+      "PostgreSQL for relational data",
+      "Real-time application architecture",
+    ],
+    githubUrl: "https://github.com/IchigoAni-19/task-score-master",
+    demoUrl: "https://task-score.vercel.app/auth",
+    imageUrl: "/images/projects/task-score.png",
   },
   {
     name: "Custom Shell Interpreter",
@@ -73,6 +97,7 @@ export const projects: Project[] = [
       "Shell parsing internals including quotes and escapes",
       "Low-level Unix system interaction",
     ],
-    githubUrl: "https://github.com",
+    githubUrl: "https://github.com/IchigoAni-19/codecrafters-shell-python",
+    imageUrl: "/images/projects/shell.png",
   },
 ];

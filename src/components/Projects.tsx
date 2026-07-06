@@ -23,71 +23,87 @@ const ProjectCard = ({ p, index }: { p: (typeof projects)[number]; index: number
         <div className="absolute inset-0 rounded-2xl border border-white/10 group-hover:border-cyan-500/50 transition-all duration-500" />
 
         {/* Card content */}
-        <div className="relative h-full bg-card/80 backdrop-blur-xl rounded-2xl p-6 overflow-hidden">
-          {/* Background gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-violet-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="relative h-full bg-card/80 backdrop-blur-xl rounded-2xl overflow-hidden">
+          {/* Project Screenshot */}
+          <div className="relative h-48 overflow-hidden">
+            <img
+              src={p.imageUrl}
+              alt={p.name}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                target.nextElementSibling?.classList.remove('hidden');
+              }}
+            />
+            <div className="hidden w-full h-full bg-gradient-to-br from-cyan-500/20 via-violet-500/20 to-blue-500/20 flex items-center justify-center">
+              <div className="text-4xl font-mono text-cyan-400/50">{"</>"}</div>
+            </div>
+            {/* Overlay gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
 
-          {/* Project number badge */}
-          <div className="absolute top-4 right-4 w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500/20 to-violet-500/20 flex items-center justify-center border border-white/10">
-            <span className="text-sm font-mono font-bold text-cyan-400">
-              {String(index + 1).padStart(2, "0")}
-            </span>
+            {/* Project number badge */}
+            <div className="absolute top-3 right-3 w-9 h-9 rounded-full bg-gradient-to-br from-cyan-500/20 to-violet-500/20 flex items-center justify-center border border-white/10 backdrop-blur-sm">
+              <span className="text-xs font-mono font-bold text-cyan-400">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+            </div>
+
+            {/* Live badge */}
+            {p.demoUrl && (
+              <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/30 backdrop-blur-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                <span className="text-[10px] font-mono text-cyan-400">LIVE</span>
+              </div>
+            )}
           </div>
 
           {/* Content */}
-          <div className="relative space-y-4">
+          <div className="relative p-5 space-y-3">
             {/* Header */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <h3 className="text-xl font-bold text-foreground group-hover:text-cyan-400 transition-colors">
-                  {p.name}
-                </h3>
-                {p.demoUrl && (
-                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                    <span className="text-[10px] font-mono text-cyan-400">LIVE</span>
-                  </span>
-                )}
-              </div>
-              <span className="text-xs font-mono text-muted-foreground">{p.year}</span>
+            <div className="space-y-1">
+              <h3 className="text-lg font-bold text-foreground group-hover:text-cyan-400 transition-colors flex items-center gap-2">
+                {p.name}
+                <span className="text-xs font-mono text-muted-foreground font-normal">{p.year}</span>
+              </h3>
             </div>
 
             {/* Description */}
-            <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
+            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
               {p.description}
             </p>
 
             {/* Tech stack */}
-            <div className="flex flex-wrap gap-1.5">
-              {p.techStack.slice(0, 5).map((t) => (
+            <div className="flex flex-wrap gap-1">
+              {p.techStack.slice(0, 4).map((t) => (
                 <Badge
                   key={t}
                   variant="secondary"
-                  className="text-[10px] font-mono px-2 py-0.5 bg-secondary/30 border-white/5 hover:bg-cyan-500/20 hover:text-cyan-400 transition-all duration-300"
+                  className="text-[9px] font-mono px-1.5 py-0 h-5 bg-secondary/30 border-white/5 hover:bg-cyan-500/20 hover:text-cyan-400 transition-all duration-300"
                 >
                   {t}
                 </Badge>
               ))}
-              {p.techStack.length > 5 && (
+              {p.techStack.length > 4 && (
                 <Badge
                   variant="secondary"
-                  className="text-[10px] font-mono px-2 py-0.5 bg-secondary/30"
+                  className="text-[9px] font-mono px-1.5 py-0 h-5 bg-secondary/30"
                 >
-                  +{p.techStack.length - 5}
+                  +{p.techStack.length - 4}
                 </Badge>
               )}
             </div>
 
             {/* Actions */}
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-1">
               <Button
                 size="sm"
                 variant="outline"
                 asChild
-                className="flex-1 border-white/10 hover:border-cyan-500/50 hover:bg-cyan-500/10 hover:text-cyan-400 transition-all duration-300"
+                className="flex-1 h-8 border-white/10 hover:border-cyan-500/50 hover:bg-cyan-500/10 hover:text-cyan-400 transition-all duration-300"
               >
                 <a href={p.githubUrl} target="_blank" rel="noopener noreferrer">
-                  <Github className="h-4 w-4 mr-1.5" />
+                  <Github className="h-3.5 w-3.5 mr-1.5" />
                   Code
                 </a>
               </Button>
@@ -95,10 +111,10 @@ const ProjectCard = ({ p, index }: { p: (typeof projects)[number]; index: number
                 <Button
                   size="sm"
                   asChild
-                  className="flex-1 bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-500 hover:to-violet-500 border-0"
+                  className="flex-1 h-8 bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-500 hover:to-violet-500 border-0"
                 >
                   <a href={p.demoUrl} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-4 w-4 mr-1.5" />
+                    <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
                     Demo
                   </a>
                 </Button>
@@ -107,11 +123,10 @@ const ProjectCard = ({ p, index }: { p: (typeof projects)[number]; index: number
           </div>
 
           {/* Decorative corner element */}
-          <div className="absolute bottom-0 right-0 w-24 h-24 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
+          <div className="absolute bottom-16 right-0 w-16 h-16 opacity-10 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none">
             <svg viewBox="0 0 100 100" className="w-full h-full text-cyan-400">
               <circle cx="80" cy="80" r="60" fill="none" stroke="currentColor" strokeWidth="0.5" />
               <circle cx="80" cy="80" r="40" fill="none" stroke="currentColor" strokeWidth="0.5" />
-              <circle cx="80" cy="80" r="20" fill="none" stroke="currentColor" strokeWidth="0.5" />
             </svg>
           </div>
         </div>

@@ -21,12 +21,23 @@ const ProjectCard = ({ p }: { p: (typeof projects)[number] }) => {
 
   return (
     <div ref={ref} {...handlers} data-project className="will-change-transform">
-      <Card className="h-full border-border bg-card transition-all duration-500 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 overflow-hidden">
+      <Card className="h-full border-border bg-card/70 backdrop-blur-sm transition-all duration-500 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 overflow-hidden">
         <CardHeader className="pb-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <CardTitle className="text-2xl font-bold tracking-tight">{p.name}</CardTitle>
-              <CardDescription className="mt-3 text-base leading-relaxed">
+              <div className="flex items-center gap-3 mb-2">
+                <CardTitle className="text-2xl font-bold tracking-tight">{p.name}</CardTitle>
+                <span className="font-mono text-xs text-muted-foreground px-2 py-0.5 rounded-full border border-border">
+                  {p.year}
+                </span>
+                {p.demoUrl && (
+                  <span className="inline-flex items-center gap-1 font-mono text-xs text-primary px-2 py-0.5 rounded-full border border-primary/40 bg-primary/10">
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                    Live
+                  </span>
+                )}
+              </div>
+              <CardDescription className="text-base leading-relaxed">
                 {p.description}
               </CardDescription>
             </div>
@@ -48,7 +59,6 @@ const ProjectCard = ({ p }: { p: (typeof projects)[number] }) => {
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Features */}
           <div>
             <h4 className="text-sm font-semibold text-foreground mb-2 font-mono">Features</h4>
             <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
@@ -58,7 +68,6 @@ const ProjectCard = ({ p }: { p: (typeof projects)[number] }) => {
             </ul>
           </div>
 
-          {/* Tech Stack */}
           <div>
             <h4 className="text-sm font-semibold text-foreground mb-2 font-mono">Tech Stack</h4>
             <div className="flex flex-wrap gap-2">
@@ -74,7 +83,6 @@ const ProjectCard = ({ p }: { p: (typeof projects)[number] }) => {
             </div>
           </div>
 
-          {/* What I Learned */}
           <div className="border-t border-border pt-4">
             <h4 className="text-sm font-semibold text-foreground mb-2 font-mono flex items-center gap-2">
               <Lightbulb className="h-4 w-4 text-primary" />
@@ -90,7 +98,6 @@ const ProjectCard = ({ p }: { p: (typeof projects)[number] }) => {
             </ul>
           </div>
 
-          {/* Demo Button */}
           {p.demoUrl && (
             <div className="pt-2">
               <Button asChild variant="outline" className="w-full border-primary/30 hover:bg-primary/10 hover:border-primary/60">
@@ -124,6 +131,7 @@ const Projects = () => {
         scrollTrigger: {
           trigger: ref.current,
           start: "top 80%",
+          toggleActions: "restart none none reverse",
         },
       });
 
@@ -132,7 +140,7 @@ const Projects = () => {
         opacity: 0,
         duration: 1,
         ease: "power3.out",
-        scrollTrigger: { trigger: ref.current, start: "top 80%" },
+        scrollTrigger: { trigger: ref.current, start: "top 80%", toggleActions: "restart none none reverse" },
       });
     }, ref);
     return () => ctx.revert();
@@ -142,8 +150,8 @@ const Projects = () => {
     <section id="projects" ref={ref} className="py-24 px-6">
       <div className="mx-auto max-w-4xl">
         <div data-project-heading>
-          <h2 className="font-mono text-sm text-primary mb-2">03.</h2>
-          <h3 className="text-3xl font-bold mb-2">Projects</h3>
+          <h2 className="font-mono text-sm text-primary mb-2">04.</h2>
+          <h3 className="text-3xl font-bold mb-2">Featured Projects</h3>
           <div className="h-[2px] w-16 bg-primary mb-10 origin-left" />
         </div>
         <div className="grid gap-8" style={{ perspective: "1000px" }}>

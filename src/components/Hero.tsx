@@ -1,11 +1,25 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Github, Linkedin, FileText, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 
+const FULL_NAME = "Harsh Patel";
+
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const cursorGlow = useRef<HTMLDivElement>(null);
+  const [typed, setTyped] = useState("");
+
+  // Typewriter effect on page load
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      i += 1;
+      setTyped(FULL_NAME.slice(0, i));
+      if (i >= FULL_NAME.length) clearInterval(interval);
+    }, 110);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -50,14 +64,6 @@ const Hero = () => {
           },
           0
         );
-
-      gsap.to("[data-hero-name]", {
-        y: -8,
-        duration: 2.5,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
     }, containerRef);
     return () => ctx.revert();
   }, []);
@@ -84,7 +90,6 @@ const Hero = () => {
       ref={containerRef}
       className="relative flex min-h-screen items-center px-6 pt-20 overflow-hidden"
     >
-      {/* Ambient glow */}
       <div
         ref={cursorGlow}
         data-hero-glow
@@ -96,24 +101,24 @@ const Hero = () => {
       />
 
       <div className="relative z-10 mx-auto max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        {/* Left side — Name, description, buttons */}
+        {/* Left side */}
         <div>
           <p data-hero-line className="font-mono text-sm text-primary mb-4">
             Hi, my name is
           </p>
           <h1
-            data-hero-line
-            data-hero-name
-            className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl"
+            className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl min-h-[1.1em]"
           >
-            Harsh Patel
+            <span>{typed}</span>
+            <span className="inline-block w-[3px] h-[0.9em] bg-primary ml-1 -mb-1 animate-pulse align-middle" />
           </h1>
           <p data-hero-line className="mt-4 text-xl text-muted-foreground sm:text-2xl">
-            Python Developer &amp; FastAPI Engineer
+            Full-Stack Developer & AI Engineer
           </p>
           <p data-hero-line className="mt-6 max-w-lg text-muted-foreground">
-            I love working in Python and building amazing production-ready APIs using FastAPI,
-            while keeping the UI clean, minimal, and smooth.
+            I build production-grade full-stack platforms with React, Node.js, and AI. From
+            AI-powered interview prep tools to recursive discussion systems and custom shell
+            interpreters — I turn ideas into impactful, reliable software.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <div data-hero-btn>
@@ -144,10 +149,8 @@ const Hero = () => {
         {/* Right side — Image placeholder */}
         <div data-hero-image className="flex justify-center lg:justify-end">
           <div className="relative group">
-            {/* Glowing border frame with pulse */}
             <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-primary via-accent to-primary opacity-50 blur-sm group-hover:opacity-80 transition-opacity duration-700 animate-glow-pulse" />
 
-            {/* Orbiting dots */}
             <div className="absolute -inset-8 animate-orbit-slow pointer-events-none">
               <div className="absolute top-0 left-1/2 h-2.5 w-2.5 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]" />
             </div>
@@ -158,11 +161,9 @@ const Hero = () => {
               <div className="absolute top-1/4 right-0 h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary))]" />
             </div>
 
-            {/* Pulse rings */}
             <div className="absolute inset-0 rounded-2xl border-2 border-primary/40 animate-pulse-ring pointer-events-none" />
             <div className="absolute inset-0 rounded-2xl border-2 border-accent/30 animate-pulse-ring pointer-events-none" style={{ animationDelay: "1.5s" }} />
 
-            {/* Floating particles */}
             <div className="absolute -inset-4 pointer-events-none overflow-visible">
               <div className="absolute bottom-0 left-[20%] h-1.5 w-1.5 rounded-full bg-primary/60 animate-float-up" />
               <div className="absolute bottom-0 left-[50%] h-1 w-1 rounded-full bg-accent/60 animate-float-up" style={{ animationDelay: "1s" }} />
@@ -173,13 +174,11 @@ const Hero = () => {
             <div className="relative w-64 h-72 sm:w-72 sm:h-80 rounded-2xl border-2 border-primary/30 bg-card/80 backdrop-blur-sm flex items-center justify-center overflow-hidden transition-all duration-500 group-hover:border-primary/60 group-hover:shadow-2xl group-hover:shadow-primary/20">
               <User className="h-20 w-20 text-muted-foreground/30" />
             </div>
-            {/* Decorative offset border */}
             <div className="absolute -bottom-3 -right-3 w-64 h-72 sm:w-72 sm:h-80 rounded-2xl border-2 border-accent/20 -z-10 transition-all duration-500 group-hover:border-accent/40" />
           </div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
         <div className="h-10 w-6 rounded-full border-2 border-muted-foreground/30 flex items-start justify-center p-1.5">
           <div className="h-2 w-1 rounded-full bg-primary animate-bounce" />

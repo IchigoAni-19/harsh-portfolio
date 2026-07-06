@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { GraduationCap, Code2, Layers, Sparkles, Terminal, Cloud } from "lucide-react";
+import { GraduationCap, Code as Code2, Layers, Sparkles, Terminal, Cloud } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 gsap.registerPlugin(ScrollTrigger);

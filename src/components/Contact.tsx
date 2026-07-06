@@ -10,9 +10,9 @@ import { useToast } from "@/hooks/use-toast";
 gsap.registerPlugin(ScrollTrigger);
 
 const socialLinks = [
-  { icon: Mail, href: "mailto:hello@example.com", label: "Email", color: "cyan" },
-  { icon: Github, href: "https://github.com", label: "GitHub", color: "violet" },
-  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn", color: "blue" },
+  { icon: Mail, href: "mailto:patelharsh12@zohomail.in", label: "Email", color: "cyan" },
+  { icon: Github, href: "https://github.com/IchigoAni-19", label: "GitHub", color: "violet" },
+  { icon: Linkedin, href: "https://www.linkedin.com/in/harsh-patel-bb5598268/", label: "LinkedIn", color: "blue" },
 ];
 
 const Contact = () => {
@@ -239,10 +239,10 @@ const Contact = () => {
             Prefer email directly?
           </p>
           <a
-            href="mailto:hello@example.com"
+            href="mailto:patelharsh12@zohomail.in"
             className="text-cyan-400 font-mono text-sm hover:underline transition-all duration-300 hover:text-cyan-300"
           >
-            hello@example.com
+            patelharsh12@zohomail.in
           </a>
         </div>
       </div>

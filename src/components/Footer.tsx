@@ -5,16 +5,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Projects", href: "#projects" },
-  { label: "Contact", href: "#contact" },
-];
-
 const socialLinks = [
-  { icon: Github, href: "https://github.com", label: "GitHub" },
-  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
+  { icon: Github, href: "https://github.com/IchigoAni-19", label: "GitHub" },
+  { icon: Linkedin, href: "https://www.linkedin.com/in/harsh-patel-bb5598268/", label: "LinkedIn" },
   { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
 ];
 
@@ -75,7 +68,7 @@ const Footer = () => {
   return (
     <footer
       ref={footerRef}
-      className="relative border-t border-white/10 py-12 px-4 sm:px-6 overflow-hidden"
+      className="relative border-t border-white/10 py-8 px-4 sm:px-6 overflow-hidden"
     >
       {/* Floating particles background */}
       <div className="absolute inset-0 pointer-events-none">
@@ -111,38 +104,6 @@ const Footer = () => {
         data-footer-content
         className="relative z-10 mx-auto max-w-6xl"
       >
-        {/* Top section */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-6 mb-8">
-          {/* Logo / Branding */}
-          <div className="flex flex-col items-center sm:items-start gap-2">
-            <h3 className="text-2xl font-bold">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500">
-                {"<dev />"}
-              </span>
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              Building the future, one line at a time
-            </p>
-          </div>
-
-          {/* Navigation */}
-          <nav className="flex flex-wrap justify-center gap-6">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="text-sm text-muted-foreground hover:text-cyan-400 transition-colors duration-300 relative group"
-              >
-                {link.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-cyan-400 group-hover:w-full transition-all duration-300" />
-              </a>
-            ))}
-          </nav>
-        </div>
-
-        {/* Divider */}
-        <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-white/20 to-transparent mb-8" />
-
         {/* Bottom section */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           {/* Copyright */}

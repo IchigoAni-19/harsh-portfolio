@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, Suspense } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Github, Linkedin, Download, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import gsap from "gsap";
@@ -12,7 +12,6 @@ const Hero = () => {
   const descRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const cursorGlow = useRef<HTMLDivElement>(null);
-  const [splineLoaded, setSplineLoaded] = useState(false);
 
   // Typewriter effect
   const [typed, setTyped] = useState("");
@@ -33,7 +32,6 @@ const Hero = () => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      // Headline - blur to clear, y offset
       tl.fromTo(
         headlineRef.current,
         { y: 50, opacity: 0, filter: "blur(10px)" },
@@ -41,7 +39,6 @@ const Hero = () => {
         0.3
       );
 
-      // Subtitle
       tl.fromTo(
         subtitleRef.current,
         { y: 40, opacity: 0 },
@@ -49,7 +46,6 @@ const Hero = () => {
         "-=0.7"
       );
 
-      // Description
       tl.fromTo(
         descRef.current,
         { y: 30, opacity: 0 },
@@ -57,7 +53,6 @@ const Hero = () => {
         "-=0.6"
       );
 
-      // CTA buttons with stagger
       tl.fromTo(
         "[data-hero-cta]",
         { scale: 0.8, opacity: 0 },
@@ -65,7 +60,6 @@ const Hero = () => {
         "-=0.4"
       );
 
-      // Spline container entrance from right
       tl.fromTo(
         splineContainerRef.current,
         { x: 100, opacity: 0 },
@@ -73,7 +67,6 @@ const Hero = () => {
         "-=1"
       );
 
-      // Floating orbs animation
       gsap.to("[data-hero-orb]", {
         y: -20,
         duration: 3 + Math.random() * 2,
@@ -147,12 +140,10 @@ const Hero = () => {
       <div className="relative z-10 mx-auto max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
         {/* Left side - Content */}
         <div ref={heroContentRef} className="text-center lg:text-left">
-          {/* Intro line */}
           <p className="font-mono text-sm text-primary/80 mb-3 tracking-widest">
             HI, I'M
           </p>
 
-          {/* Main headline - with typewriter */}
           <h1
             ref={headlineRef}
             className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-4"
@@ -163,7 +154,6 @@ const Hero = () => {
             <span className="inline-block w-[3px] h-[0.85em] bg-gradient-to-b from-cyan-400 to-blue-600 ml-2 -mb-2 animate-pulse align-middle" />
           </h1>
 
-          {/* Subtitle with roles */}
           <p
             ref={subtitleRef}
             className="text-xl sm:text-2xl md:text-3xl font-light text-foreground/90 mb-6"
@@ -173,7 +163,6 @@ const Hero = () => {
             <span className="text-cyan-400 font-medium">Cloud Solutions</span>
           </p>
 
-          {/* Description */}
           <p
             ref={descRef}
             className="text-muted-foreground max-w-lg mx-auto lg:mx-0 mb-10 leading-relaxed"
@@ -185,7 +174,6 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div ref={ctaRef} className="flex flex-wrap justify-center lg:justify-start gap-4">
-            {/* Hire Me - Primary glowing button */}
             <Button
               data-hero-cta
               asChild
@@ -198,7 +186,6 @@ const Hero = () => {
               </a>
             </Button>
 
-            {/* Download Resume */}
             <Button
               data-hero-cta
               asChild
@@ -206,13 +193,12 @@ const Hero = () => {
               variant="outline"
               className="px-8 py-6 text-lg font-medium border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 hover:border-cyan-400/70 hover:text-cyan-300 transition-all duration-300"
             >
-              <a href="/resume.pdf" download>
+              <a href="/Harsh_Patel_Resume.pdf" download="Harsh_Patel_Resume.pdf">
                 <Download className="mr-2 h-5 w-5" />
                 Download Resume
               </a>
             </Button>
 
-            {/* Social icons */}
             <div className="flex items-center gap-2 ml-2">
               <Button
                 data-hero-cta
@@ -221,7 +207,7 @@ const Hero = () => {
                 asChild
                 className="h-12 w-12 rounded-full border border-border/50 hover:border-cyan-500/50 hover:bg-cyan-500/10 hover:text-cyan-400 transition-all duration-300"
               >
-                <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                <a href="https://github.com/IchigoAni-19" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                   <Github className="h-5 w-5" />
                 </a>
               </Button>
@@ -232,7 +218,7 @@ const Hero = () => {
                 asChild
                 className="h-12 w-12 rounded-full border border-border/50 hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-400 transition-all duration-300"
               >
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                <a href="https://www.linkedin.com/in/harsh-patel-bb5598268/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
                   <Linkedin className="h-5 w-5" />
                 </a>
               </Button>
@@ -240,51 +226,29 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Right side - Spline 3D */}
+        {/* Right side - Spline 3D Interactive Orb */}
         <div
           ref={splineContainerRef}
-          className="relative flex justify-center lg:justify-end items-center min-h-[400px] lg:min-h-[500px]"
+          className="relative flex justify-center lg:justify-end items-center min-h-[400px] lg:min-h-[560px]"
         >
           {/* Glow background behind 3D */}
           <div
-            className="absolute inset-0 opacity-40"
+            className="absolute inset-0 opacity-40 pointer-events-none"
             style={{
               background: "radial-gradient(circle at center, hsla(200, 80%, 50%, 0.2) 0%, transparent 60%)",
               filter: "blur(40px)",
             }}
           />
 
-          {/* Placeholder for Spline - using an animated gradient box as fallback */}
-          <div className="relative w-full max-w-md aspect-square">
-            {/* Animated border */}
-            <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-500 via-violet-500 to-cyan-500 opacity-60 blur-sm animate-pulse" />
-            <div className="absolute -inset-0.5 rounded-3xl bg-gradient-to-r from-blue-600 via-violet-600 to-cyan-600 opacity-80" />
-
-            {/* Inner content */}
-            <div className="relative rounded-3xl bg-card/90 backdrop-blur-xl h-full flex items-center justify-center overflow-hidden">
-              {/* 3D-like animated orbs */}
-              <div className="absolute inset-0">
-                <div className="absolute top-1/4 left-1/4 w-24 h-24 rounded-full bg-blue-500/30 blur-2xl animate-blob-1" />
-                <div className="absolute bottom-1/3 right-1/4 w-32 h-32 rounded-full bg-violet-500/30 blur-2xl animate-blob-2" />
-                <div className="absolute bottom-1/4 left-1/3 w-28 h-28 rounded-full bg-cyan-500/20 blur-2xl animate-blob-3" />
-              </div>
-
-              {/* Center code icon */}
-              <div className="relative z-10 flex flex-col items-center gap-4">
-                <div className="text-6xl font-mono font-bold bg-gradient-to-br from-blue-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent">
-                  {"</>"}
-                </div>
-                <p className="text-sm text-muted-foreground font-mono">3D Experience</p>
-              </div>
-
-              {/* Orbital elements */}
-              <div className="absolute inset-0 pointer-events-none" style={{ animation: "orbit 20s linear infinite" }}>
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_20px_hsl(180,80%,50%)]" />
-              </div>
-              <div className="absolute inset-4 pointer-events-none" style={{ animation: "orbit 15s linear infinite reverse" }}>
-                <div className="absolute bottom-0 left-1/4 w-2 h-2 rounded-full bg-violet-400 shadow-[0_0_15px_hsl(260,70%,60%)]" />
-              </div>
-            </div>
+          <div className="relative w-full h-[400px] lg:h-[560px] rounded-3xl overflow-hidden">
+            <iframe
+              src="https://my.spline.design/reactiveorb-lBmPVC60WGcCyWrDfTG92lbB/"
+              frameBorder="0"
+              width="100%"
+              height="100%"
+              className="w-full h-full"
+              title="Interactive 3D Orb"
+            />
           </div>
         </div>
       </div>

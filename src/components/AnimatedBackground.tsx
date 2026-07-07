@@ -88,41 +88,36 @@ const AnimatedBackground = () => {
       pulseDir: 1,
     };
 
-    const planetDefs: Planet[] = [
+    interface Moon { angle: number; dist: number; radius: number; speed: number; color: string; }
+    interface PlanetX extends Planet { moons: Moon[]; rotation: number; bandColor?: string; }
+    const planetDefs: PlanetX[] = [
       {
-        x: W * 0.82,
-        y: H * 0.18,
-        radius: 38,
-        vx: 0.015,
-        vy: 0.008,
-        color: "rgba(80, 40, 120, 0.85)",
-        glowColor: "rgba(120, 60, 200, 0.35)",
-        hasRing: true,
-        ringTilt: 0.28,
+        x: W * 0.82, y: H * 0.18, radius: 38, vx: 0.015, vy: 0.008,
+        color: "rgba(80, 40, 120, 0.85)", glowColor: "rgba(120, 60, 200, 0.35)",
+        hasRing: true, ringTilt: 0.28, rotation: 0, bandColor: "rgba(200,150,255,0.15)",
+        moons: [
+          { angle: 0, dist: 62, radius: 3.5, speed: 0.012, color: "rgba(220,210,230,0.9)" },
+          { angle: Math.PI, dist: 82, radius: 2.5, speed: -0.008, color: "rgba(200,190,220,0.85)" },
+        ],
       },
       {
-        x: W * 0.15,
-        y: H * 0.72,
-        radius: 22,
-        vx: -0.018,
-        vy: -0.01,
-        color: "rgba(30, 60, 110, 0.9)",
-        glowColor: "rgba(50, 100, 200, 0.3)",
-        hasRing: false,
-        ringTilt: 0,
+        x: W * 0.15, y: H * 0.72, radius: 22, vx: -0.018, vy: -0.01,
+        color: "rgba(30, 60, 110, 0.9)", glowColor: "rgba(50, 100, 200, 0.3)",
+        hasRing: false, ringTilt: 0, rotation: 0, bandColor: "rgba(120,180,255,0.18)",
+        moons: [{ angle: 0.5, dist: 40, radius: 2.5, speed: 0.018, color: "rgba(230,230,240,0.85)" }],
       },
       {
-        x: W * 0.6,
-        y: H * 0.88,
-        radius: 14,
-        vx: 0.012,
-        vy: -0.015,
-        color: "rgba(20, 80, 80, 0.8)",
-        glowColor: "rgba(20, 150, 150, 0.25)",
-        hasRing: false,
-        ringTilt: 0,
+        x: W * 0.6, y: H * 0.88, radius: 14, vx: 0.012, vy: -0.015,
+        color: "rgba(20, 80, 80, 0.8)", glowColor: "rgba(20, 150, 150, 0.25)",
+        hasRing: true, ringTilt: 0.2, rotation: 0,
+        moons: [],
       },
     ];
+
+    // Black hole with accretion disk
+    const blackHole = {
+      x: W * 0.5, y: H * 0.45, radius: 18, vx: 0.006, vy: -0.004, rotation: 0,
+    };
 
     // Galaxies — elliptical clusters of tiny dots
     const galaxies: Galaxy[] = [

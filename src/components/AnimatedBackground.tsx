@@ -1,173 +1,256 @@
 import { useEffect, useRef } from "react";
 
-/**
- * Futuristic premium gradient background with evening winter theme.
- * Deep blues, indigos, and violet glows with floating orbs.
- */
+interface Star {
+  x: number;
+  y: number;
+  radius: number;
+  vx: number;
+  vy: number;
+  opacity: number;
+  opacityDir: number;
+  twinkleSpeed: number;
+}
+
+interface Planet {
+  x: number;
+  y: number;
+  radius: number;
+  vx: number;
+  vy: number;
+  color: string;
+  glowColor: string;
+  hasRing: boolean;
+  ringTilt: number;
+}
+
 const AnimatedBackground = () => {
-  const orbsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    // An orbs floating animation
-    orbsRef.current.forEach((orb) => {
-      if (orb) {
-        const delay = Math.random() * 2;
-        const duration = 4 + Math.random() * 3;
-        orb.style.animationDelay = `${delay}s`;
-        orb.style.animationDuration = `${duration}s`;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animId: number;
+    let W = window.innerWidth;
+    let H = window.innerHeight;
+
+    const resize = () => {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = W;
+      canvas.height = H;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    // Create stars
+    const STAR_COUNT = 220;
+    const stars: Star[] = Array.from({ length: STAR_COUNT }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      radius: Math.random() * 1.2 + 0.2,
+      vx: (Math.random() - 0.5) * 0.12,
+      vy: (Math.random() - 0.5) * 0.08,
+      opacity: Math.random() * 0.6 + 0.2,
+      opacityDir: Math.random() > 0.5 ? 1 : -1,
+      twinkleSpeed: Math.random() * 0.008 + 0.003,
+    }));
+
+    // Create planets
+    const planetDefs: Planet[] = [
+      {
+        x: W * 0.82,
+        y: H * 0.18,
+        radius: 38,
+        vx: 0.015,
+        vy: 0.008,
+        color: "rgba(80, 40, 120, 0.85)",
+        glowColor: "rgba(120, 60, 200, 0.35)",
+        hasRing: true,
+        ringTilt: 0.28,
+      },
+      {
+        x: W * 0.15,
+        y: H * 0.72,
+        radius: 22,
+        vx: -0.018,
+        vy: -0.01,
+        color: "rgba(30, 60, 110, 0.9)",
+        glowColor: "rgba(50, 100, 200, 0.3)",
+        hasRing: false,
+        ringTilt: 0,
+      },
+      {
+        x: W * 0.6,
+        y: H * 0.88,
+        radius: 14,
+        vx: 0.012,
+        vy: -0.015,
+        color: "rgba(20, 80, 80, 0.8)",
+        glowColor: "rgba(20, 150, 150, 0.25)",
+        hasRing: false,
+        ringTilt: 0,
+      },
+    ];
+
+    const drawStar = (s: Star) => {
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200, 220, 255, ${s.opacity})`;
+      ctx.fill();
+      // Cross sparkle for larger stars
+      if (s.radius > 0.9) {
+        ctx.beginPath();
+        ctx.moveTo(s.x - s.radius * 2.5, s.y);
+        ctx.lineTo(s.x + s.radius * 2.5, s.y);
+        ctx.moveTo(s.x, s.y - s.radius * 2.5);
+        ctx.lineTo(s.x, s.y + s.radius * 2.5);
+        ctx.strokeStyle = `rgba(180, 210, 255, ${s.opacity * 0.35})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
       }
-    });
+    };
+
+    const drawPlanet = (p: Planet) => {
+      // Glow
+      const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 2.5);
+      grd.addColorStop(0, p.glowColor);
+      grd.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius * 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = grd;
+      ctx.fill();
+
+      // Planet body gradient
+      const bodyGrd = ctx.createRadialGradient(
+        p.x - p.radius * 0.3,
+        p.y - p.radius * 0.3,
+        p.radius * 0.1,
+        p.x,
+        p.y,
+        p.radius
+      );
+      bodyGrd.addColorStop(0, lightenColor(p.color, 0.35));
+      bodyGrd.addColorStop(1, p.color);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = bodyGrd;
+      ctx.fill();
+
+      // Ring
+      if (p.hasRing) {
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.scale(1, p.ringTilt);
+        ctx.beginPath();
+        ctx.arc(0, 0, p.radius * 1.85, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(180, 140, 255, 0.45)";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(0, 0, p.radius * 2.1, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(180, 140, 255, 0.22)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Surface sheen
+      const sheenGrd = ctx.createLinearGradient(
+        p.x - p.radius,
+        p.y - p.radius,
+        p.x + p.radius * 0.5,
+        p.y
+      );
+      sheenGrd.addColorStop(0, "rgba(255,255,255,0.12)");
+      sheenGrd.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = sheenGrd;
+      ctx.fill();
+    };
+
+    const lightenColor = (color: string, amount: number) => {
+      const m = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (!m) return color;
+      const r = Math.min(255, parseInt(m[1]) + Math.round(amount * 200));
+      const g = Math.min(255, parseInt(m[2]) + Math.round(amount * 200));
+      const b = Math.min(255, parseInt(m[3]) + Math.round(amount * 200));
+      return `rgba(${r}, ${g}, ${b}, 0.9)`;
+    };
+
+    const draw = () => {
+      // Background
+      ctx.clearRect(0, 0, W, H);
+      const bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, "#05050f");
+      bg.addColorStop(0.4, "#080814");
+      bg.addColorStop(0.7, "#0a0818");
+      bg.addColorStop(1, "#06060f");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Subtle nebula glow
+      const nebula1 = ctx.createRadialGradient(W * 0.75, H * 0.2, 0, W * 0.75, H * 0.2, W * 0.35);
+      nebula1.addColorStop(0, "rgba(60, 20, 120, 0.08)");
+      nebula1.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = nebula1;
+      ctx.fillRect(0, 0, W, H);
+
+      const nebula2 = ctx.createRadialGradient(W * 0.2, H * 0.65, 0, W * 0.2, H * 0.65, W * 0.3);
+      nebula2.addColorStop(0, "rgba(10, 40, 90, 0.1)");
+      nebula2.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = nebula2;
+      ctx.fillRect(0, 0, W, H);
+
+      // Stars
+      for (const s of stars) {
+        // Twinkle
+        s.opacity += s.twinkleSpeed * s.opacityDir;
+        if (s.opacity > 0.85 || s.opacity < 0.1) s.opacityDir *= -1;
+
+        // Move
+        s.x += s.vx;
+        s.y += s.vy;
+        if (s.x < -2) s.x = W + 2;
+        if (s.x > W + 2) s.x = -2;
+        if (s.y < -2) s.y = H + 2;
+        if (s.y > H + 2) s.y = -2;
+
+        drawStar(s);
+      }
+
+      // Planets
+      for (const p of planetDefs) {
+        p.x += p.vx;
+        p.y += p.vy;
+        // Bounce off edges with margin
+        const margin = p.radius * 4;
+        if (p.x < margin || p.x > W - margin) p.vx *= -1;
+        if (p.y < margin || p.y > H - margin) p.vy *= -1;
+
+        drawPlanet(p);
+      }
+
+      animId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", resize);
+    };
   }, []);
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-      {/* Base winter evening gradient - deep blues to violet */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `
-            linear-gradient(
-              180deg,
-              hsl(220, 35%, 5%) 0%,
-              hsl(230, 40%, 8%) 15%,
-              hsl(240, 45%, 12%) 30%,
-              hsl(250, 50%, 15%) 45%,
-              hsl(260, 55%, 18%) 60%,
-              hsl(270, 60%, 12%) 80%,
-              hsl(220, 30%, 6%) 100%
-            )
-          `,
-        }}
-      />
-
-      {/* Aurora-like gradient overlay */}
-      <div
-        className="absolute inset-0 opacity-40"
-        style={{
-          background: `
-            radial-gradient(
-              ellipse 80% 50% at 50% 0%,
-              hsl(200, 80%, 30%) 0%,
-              transparent 50%
-            ),
-            radial-gradient(
-              ellipse 60% 40% at 70% 20%,
-              hsl(260, 70%, 35%) 0%,
-              transparent 45%
-            ),
-            radial-gradient(
-              ellipse 50% 30% at 30% 30%,
-              hsl(220, 60%, 30%) 0%,
-              transparent 40%
-            )
-          `,
-        }}
-      />
-
-      {/* Layer 1 - Large atmospheric orbs */}
-      <div className="absolute inset-0">
-        <div
-          ref={(el) => (orbsRef.current[0] = el)}
-          className="absolute top-[5%] left-[10%] w-[500px] h-[500px] rounded-full animate-blob-1"
-          style={{
-            background: "radial-gradient(circle, hsla(200, 80%, 60%, 0.15) 0%, transparent 70%)",
-            filter: "blur(60px)",
-          }}
-        />
-        <div
-          ref={(el) => (orbsRef.current[1] = el)}
-          className="absolute top-[40%] right-[5%] w-[450px] h-[450px] rounded-full animate-blob-2"
-          style={{
-            background: "radial-gradient(circle, hsla(260, 70%, 55%, 0.12) 0%, transparent 70%)",
-            filter: "blur(70px)",
-          }}
-        />
-      </div>
-
-      {/* Layer 2 - Medium accent orbs */}
-      <div className="absolute inset-0">
-        <div
-          ref={(el) => (orbsRef.current[2] = el)}
-          className="absolute top-[60%] left-[30%] w-[400px] h-[400px] rounded-full animate-blob-3"
-          style={{
-            background: "radial-gradient(circle, hsla(220, 70%, 50%, 0.1) 0%, transparent 70%)",
-            filter: "blur(50px)",
-          }}
-        />
-        <div
-          ref={(el) => (orbsRef.current[3] = el)}
-          className="absolute top-[20%] right-[30%] w-[350px] h-[350px] rounded-full animate-blob-4"
-          style={{
-            background: "radial-gradient(circle, hsla(280, 60%, 50%, 0.1) 0%, transparent 70%)",
-            filter: "blur(55px)",
-          }}
-        />
-      </div>
-
-      {/* Layer 3 - Small neon accent orbs */}
-      <div className="absolute inset-0">
-        <div
-          ref={(el) => (orbsRef.current[4] = el)}
-          className="absolute top-[75%] right-[25%] w-[250px] h-[250px] rounded-full animate-blob-1"
-          style={{
-            background: "radial-gradient(circle, hsla(190, 90%, 60%, 0.12) 0%, transparent 70%)",
-            filter: "blur(40px)",
-          }}
-        />
-        <div
-          ref={(el) => (orbsRef.current[5] = el)}
-          className="absolute top-[85%] left-[15%] w-[300px] h-[300px] rounded-full animate-blob-2"
-          style={{
-            background: "radial-gradient(circle, hsla(250, 80%, 60%, 0.1) 0%, transparent 70%)",
-            filter: "blur(45px)",
-          }}
-        />
-      </div>
-
-      {/* Subtle grid pattern for depth */}
-      <div
-        className="absolute inset-0 opacity-[0.02]"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(100, 150, 255, 0.3) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(100, 150, 255, 0.3) 1px, transparent 1px)
-          `,
-          backgroundSize: "80px 80px",
-        }}
-      />
-
-      {/* Noise texture overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.015]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-        }}
-      />
-
-      {/* Vignette darkening edges */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: "radial-gradient(ellipse at center, transparent 30%, hsl(220, 30%, 5%) 100%)",
-        }}
-      />
-
-      {/* Top edge glow - aurora-like */}
-      <div
-        className="absolute -top-20 left-1/2 -translate-x-1/2 h-60 w-[900px] rounded-full blur-[100px] opacity-30"
-        style={{
-          background: "linear-gradient(180deg, hsla(200, 80%, 50%, 0.3) 0%, transparent 100%)",
-        }}
-      />
-
-      {/* Bottom accent glow */}
-      <div
-        className="absolute -bottom-20 right-0 w-[50vw] h-[40vh] rounded-full blur-[120px] opacity-20"
-        style={{
-          background: "radial-gradient(circle, hsla(260, 70%, 40%, 0.4) 0%, transparent 70%)",
-        }}
-      />
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="pointer-events-none fixed inset-0 z-0"
+      style={{ width: "100%", height: "100%" }}
+    />
   );
 };
 

@@ -8,7 +8,6 @@ import Timeline from "@/components/Timeline";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import AnimatedBackground from "@/components/AnimatedBackground";
-import Snowfall from "@/components/Snowfall";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
@@ -23,9 +22,8 @@ const Index = () => {
         className={loaded ? "opacity-100 transition-opacity duration-700" : "opacity-0"}
         style={{ visibility: loaded ? "visible" : "hidden" }}
       >
-        {/* Background layers */}
+        {/* Background */}
         <AnimatedBackground />
-        <Snowfall />
 
         {/* Navigation */}
         <Navbar />

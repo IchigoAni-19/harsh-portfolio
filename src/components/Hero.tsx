@@ -1,23 +1,46 @@
 import { useEffect, useRef, useState } from "react";
-import { Download, ArrowDown } from "lucide-react";
+import { Download, ArrowDown, Mail, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 
 const FULL_NAME = "Harsh Patel";
 
+const ROLES = [
+  "Full-Stack Engineer",
+  "AI Integration Specialist",
+  "Cloud & Backend Architect",
+  "Problem Solver",
+];
+
+const TECH_STACK = [
+  "React", "TypeScript", "Node.js", "Express", "MongoDB",
+  "Python", "Gemini AI", "Tailwind", "Vercel", "Linux", "Git",
+];
+
+const CODE_LINES = [
+  { p: "const", k: "harsh", op: "=", v: "{" },
+  { indent: 1, key: "role", val: "'Full-Stack Engineer'" },
+  { indent: 1, key: "stack", val: "['React', 'Node', 'AI']" },
+  { indent: 1, key: "graduating", val: "2026" },
+  { indent: 1, key: "status", val: "'available'", accent: true },
+  { p: "}", raw: true },
+  { p: "" },
+  { comment: "// building the future, one commit at a time" },
+];
+
 const Hero = ({ loaded = false }: { loaded?: boolean }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const heroContentRef = useRef<HTMLDivElement>(null);
-  const splineContainerRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
   const cursorGlow = useRef<HTMLDivElement>(null);
 
   const [typed, setTyped] = useState("");
+  const [roleIndex, setRoleIndex] = useState(0);
 
-  // Typewriter effect - starts after preloader completes
+  // Typewriter for name
   useEffect(() => {
     if (!loaded) return;
     setTyped("");
@@ -27,81 +50,82 @@ const Hero = ({ loaded = false }: { loaded?: boolean }) => {
         i += 1;
         setTyped(FULL_NAME.slice(0, i));
         if (i >= FULL_NAME.length) clearInterval(interval);
-      }, 110);
-      return () => clearInterval(interval);
-    }, 400);
+      }, 100);
+    }, 350);
     return () => clearTimeout(timer);
   }, [loaded]);
 
-  // Dynamic font size based on how many chars typed
-  const dynamicFontSize = () => {
-    const len = typed.length;
-    if (len <= 5) return "text-7xl sm:text-8xl md:text-9xl";
-    if (len <= 8) return "text-5xl sm:text-6xl md:text-7xl";
-    return "text-4xl sm:text-5xl md:text-6xl";
-  };
+  // Rotating role text
+  useEffect(() => {
+    const id = setInterval(() => {
+      setRoleIndex((i) => (i + 1) % ROLES.length);
+    }, 2600);
+    return () => clearInterval(id);
+  }, []);
 
-  // Main entrance animations
+  // Entrance animation
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
       tl.fromTo(
-        headlineRef.current,
-        { y: 50, opacity: 0, filter: "blur(10px)" },
-        { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.2 },
-        0.5
-      );
-
-      tl.fromTo(
-        subtitleRef.current,
-        { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1 },
-        "-=0.7"
-      );
-
-      tl.fromTo(
-        descRef.current,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8 },
-        "-=0.6"
-      );
-
-      tl.fromTo(
-        "[data-hero-cta]",
-        { scale: 0.8, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.5, stagger: 0.15 },
-        "-=0.4"
-      );
-
-      tl.fromTo(
-        splineContainerRef.current,
-        { x: 100, opacity: 0 },
-        { x: 0, opacity: 1, duration: 1.5, ease: "power2.out" },
-        "-=1"
-      );
+        "[data-hero-badge]",
+        { y: -20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6 },
+        0.2
+      )
+        .fromTo(
+          headlineRef.current,
+          { y: 40, opacity: 0, filter: "blur(10px)" },
+          { y: 0, opacity: 1, filter: "blur(0px)", duration: 1 },
+          0.4
+        )
+        .fromTo(
+          subtitleRef.current,
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7 },
+          "-=0.5"
+        )
+        .fromTo(
+          descRef.current,
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7 },
+          "-=0.4"
+        )
+        .fromTo(
+          "[data-hero-cta]",
+          { scale: 0.9, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.5, stagger: 0.1 },
+          "-=0.3"
+        )
+        .fromTo(
+          rightRef.current,
+          { x: 60, opacity: 0 },
+          { x: 0, opacity: 1, duration: 1 },
+          "-=1"
+        );
 
       gsap.to("[data-hero-orb]", {
-        y: -20,
-        duration: 3 + Math.random() * 2,
+        y: -18,
+        duration: 3,
         repeat: -1,
         yoyo: true,
         ease: "power1.inOut",
-        stagger: { each: 0.3, from: "random" },
+        stagger: { each: 0.4, from: "random" },
       });
     }, containerRef);
 
     return () => ctx.revert();
   }, []);
 
-  // Cursor glow follow
+  // Cursor follow glow
   useEffect(() => {
     const handleMouse = (e: MouseEvent) => {
       if (!cursorGlow.current || !containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       gsap.to(cursorGlow.current, {
-        x: e.clientX - rect.left - 150,
-        y: e.clientY - rect.top - 150,
+        x: e.clientX - rect.left - 200,
+        y: e.clientY - rect.top - 200,
         duration: 0.8,
         ease: "power2.out",
       });
@@ -115,165 +139,304 @@ const Hero = ({ loaded = false }: { loaded?: boolean }) => {
     <section
       id="home"
       ref={containerRef}
-      className="relative flex min-h-screen items-center px-4 sm:px-6 pt-20 pb-10 overflow-hidden"
+      className="relative flex min-h-screen items-center px-4 sm:px-6 pt-24 pb-16 overflow-hidden"
     >
-      {/* Cursor follow glow */}
+      {/* Cursor glow */}
       <div
         ref={cursorGlow}
-        className="pointer-events-none absolute h-[300px] w-[300px] rounded-full opacity-20"
+        className="pointer-events-none absolute h-[400px] w-[400px] rounded-full opacity-30"
         style={{
-          background: "radial-gradient(circle, hsla(200, 80%, 60%, 0.4) 0%, transparent 70%)",
-          filter: "blur(60px)",
+          background: "radial-gradient(circle, hsla(190,90%,55%,0.35) 0%, transparent 70%)",
+          filter: "blur(70px)",
         }}
       />
 
-      {/* Floating neon orbs */}
+      {/* Grid background */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage:
+            "linear-gradient(hsla(190,90%,60%,1) 1px, transparent 1px), linear-gradient(90deg, hsla(190,90%,60%,1) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+          maskImage:
+            "radial-gradient(ellipse at center, black 30%, transparent 75%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse at center, black 30%, transparent 75%)",
+        }}
+      />
+
+      {/* Floating orbs */}
       {[...Array(4)].map((_, i) => (
         <div
           key={i}
           data-hero-orb
           className="pointer-events-none absolute rounded-full"
           style={{
-            width: `${60 + i * 20}px`,
-            height: `${60 + i * 20}px`,
-            left: `${10 + i * 18}%`,
-            top: `${20 + (i % 3) * 25}%`,
+            width: `${80 + i * 30}px`,
+            height: `${80 + i * 30}px`,
+            left: `${8 + i * 22}%`,
+            top: `${18 + (i % 3) * 24}%`,
             background: `radial-gradient(circle, ${
               i % 2 === 0
-                ? "hsla(200, 80%, 60%, 0.15)"
-                : "hsla(260, 70%, 60%, 0.12)"
+                ? "hsla(190,90%,55%,0.18)"
+                : "hsla(240,80%,65%,0.14)"
             } 0%, transparent 70%)`,
-            filter: "blur(40px)",
+            filter: "blur(48px)",
           }}
         />
       ))}
 
-      <div className="relative z-10 mx-auto max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-        {/* Left - Content */}
-        <div ref={heroContentRef} className="text-center lg:text-left">
+      <div className="relative z-10 mx-auto max-w-7xl w-full grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16 items-center">
+        {/* Left content */}
+        <div className="text-center lg:text-left">
+          {/* Availability badge */}
+          <div
+            data-hero-badge
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/5 backdrop-blur-sm mb-6"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-70 animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+            </span>
+            <span className="font-mono text-xs text-emerald-300/90 tracking-wide">
+              Available for opportunities
+            </span>
+          </div>
+
           <p className="font-mono text-sm text-cyan-400/70 mb-3 tracking-[0.25em] uppercase">
             Hi, I'm
           </p>
 
-          {/* Typewriter headline - dynamic font size */}
+          {/* Typewriter headline */}
           <h1
             ref={headlineRef}
-            className={`font-bold tracking-tight mb-4 transition-all duration-300 ${dynamicFontSize()}`}
+            className="font-bold tracking-tight mb-5 text-6xl sm:text-7xl md:text-8xl leading-[1.05]"
             style={{ minHeight: "1.1em" }}
           >
-            <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-violet-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-300 via-cyan-300 to-violet-400 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(34,211,238,0.15)]">
               {typed}
             </span>
-            <span className="inline-block w-[3px] h-[0.8em] bg-gradient-to-b from-cyan-400 to-blue-600 ml-1.5 -mb-1 animate-pulse align-middle" />
+            <span className="inline-block w-[4px] h-[0.75em] bg-cyan-400 ml-1.5 -mb-1 animate-pulse align-middle rounded-sm" />
           </h1>
 
+          {/* Rotating role */}
           <p
             ref={subtitleRef}
-            className="text-xl sm:text-2xl md:text-3xl font-light text-white/80 mb-6"
+            className="text-xl sm:text-2xl md:text-3xl font-light text-white/80 mb-6 min-h-[2.2em]"
           >
-            Full Stack Engineer |{" "}
-            <span className="text-blue-400 font-medium">AI Integration</span> &{" "}
-            <span className="text-cyan-400 font-medium">Cloud Solutions</span>
+            <span className="text-white/50">I'm a </span>
+            <span
+              key={roleIndex}
+              className="inline-block bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent font-medium animate-fade-in"
+            >
+              {ROLES[roleIndex]}
+            </span>
           </p>
 
           <p
             ref={descRef}
-            className="text-white/50 max-w-lg mx-auto lg:mx-0 mb-10 leading-relaxed"
+            className="text-white/55 max-w-lg mx-auto lg:mx-0 mb-9 leading-relaxed text-base sm:text-lg"
           >
-            I craft cutting-edge digital experiences with modern technologies.
-            From AI-powered platforms to scalable cloud architectures — I turn
-            complex problems into elegant, production-ready solutions.
+            I build AI-powered platforms and full-stack systems that feel fast,
+            secure, and delightful — from intelligent resume tooling to
+            recursive discussion engines and Unix-level shell interpreters.
           </p>
 
-          {/* CTA Buttons - Download Resume only (Hire Me removed) */}
-          <div ref={ctaRef} className="flex flex-wrap justify-center lg:justify-start gap-4">
+          {/* CTA Buttons */}
+          <div
+            ref={ctaRef}
+            className="flex flex-wrap justify-center lg:justify-start gap-3"
+          >
+            <Button
+              data-hero-cta
+              asChild
+              size="lg"
+              className="group px-7 py-6 text-base font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 border-0 shadow-[0_0_25px_rgba(6,182,212,0.35)] hover:shadow-[0_0_40px_rgba(6,182,212,0.55)] transition-all duration-300 hover:-translate-y-0.5"
+            >
+              <a href="#contact">
+                <Mail className="mr-2 h-4 w-4 transition-transform group-hover:rotate-12" />
+                Let's Connect
+              </a>
+            </Button>
             <Button
               data-hero-cta
               asChild
               size="lg"
               variant="outline"
-              className="px-8 py-6 text-base font-semibold border-cyan-500/50 text-cyan-400 bg-cyan-500/5 hover:bg-cyan-500/15 hover:border-cyan-400/70 hover:text-cyan-300 transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.1)] hover:shadow-[0_0_30px_rgba(6,182,212,0.25)]"
+              className="group px-7 py-6 text-base font-semibold border-cyan-500/40 text-cyan-300 bg-cyan-500/5 hover:bg-cyan-500/15 hover:border-cyan-400/70 hover:text-cyan-200 transition-all duration-300 hover:-translate-y-0.5"
             >
-              <a href="/Harsh_Patel_Resume.pdf" download="Harsh_Patel_Resume.pdf">
-                <Download className="mr-2 h-5 w-5" />
+              <a
+                href="/Harsh_Patel_Resume.pdf"
+                download="Harsh_Patel_Resume.pdf"
+              >
+                <Download className="mr-2 h-4 w-4 transition-transform group-hover:translate-y-0.5" />
                 Download Resume
               </a>
             </Button>
           </div>
 
-          {/* Stats row */}
+          {/* Stats */}
           <div
             data-hero-cta
-            className="flex flex-wrap justify-center lg:justify-start gap-6 mt-10"
+            className="flex flex-wrap justify-center lg:justify-start gap-8 mt-10 pt-8 border-t border-white/[0.06]"
           >
             {[
               { value: "3+", label: "Projects Shipped" },
               { value: "2026", label: "Graduating" },
-              { value: "Full Stack", label: "Engineer" },
+              { value: "AI + Cloud", label: "Focus Areas" },
             ].map((s) => (
               <div key={s.label} className="text-center lg:text-left">
-                <div className="text-2xl font-bold text-white">{s.value}</div>
-                <div className="text-xs text-white/40 font-mono">{s.label}</div>
+                <div className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                  {s.value}
+                </div>
+                <div className="text-xs text-white/40 font-mono mt-0.5 tracking-wider uppercase">
+                  {s.label}
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Right - Decorative glowing orb */}
-        <div
-          ref={splineContainerRef}
-          className="relative flex justify-center lg:justify-end items-center min-h-[400px] lg:min-h-[560px]"
-        >
+        {/* Right - Terminal / Code card */}
+        <div ref={rightRef} className="relative flex justify-center lg:justify-end">
+          {/* Ambient glow behind card */}
           <div
-            className="absolute inset-0 opacity-30 pointer-events-none"
+            className="absolute inset-0 opacity-60 pointer-events-none"
             style={{
               background:
-                "radial-gradient(circle at center, hsla(200, 80%, 50%, 0.25) 0%, transparent 60%)",
-              filter: "blur(50px)",
+                "radial-gradient(circle at 60% 40%, hsla(190,90%,55%,0.25) 0%, transparent 60%)",
+              filter: "blur(70px)",
             }}
           />
 
-          {/* Static glowing orb */}
-          <div className="relative w-[320px] h-[320px] lg:w-[420px] lg:h-[420px]">
+          {/* Orbiting glow ring */}
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-cyan-500/10 pointer-events-none"
+            style={{ animation: "spin 40s linear infinite" }}
+          >
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.8)]" />
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.8)]" />
+          </div>
+
+          {/* Code Card */}
+          <div className="relative w-full max-w-[460px] rounded-2xl bg-[#0a0f1e]/80 backdrop-blur-xl border border-white/[0.08] shadow-[0_20px_80px_rgba(6,182,212,0.15)] overflow-hidden group hover:border-cyan-500/30 transition-all duration-500">
+            {/* Gradient border glow on hover */}
             <div
-              className="absolute inset-0 rounded-full"
+              className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
               style={{
                 background:
-                  "radial-gradient(circle at 40% 40%, rgba(100, 200, 255, 0.15) 0%, rgba(6, 182, 212, 0.08) 40%, transparent 70%)",
-                filter: "blur(60px)",
+                  "linear-gradient(135deg, hsla(190,90%,60%,0.4), transparent 40%, transparent 60%, hsla(240,80%,65%,0.4))",
+                mask:
+                  "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                WebkitMask:
+                  "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
+                padding: "1px",
               }}
             />
-            <div
-              className="absolute inset-8 rounded-full border border-cyan-500/20"
-              style={{
-                background:
-                  "radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.08) 0%, transparent 50%), radial-gradient(circle at center, rgba(6, 182, 212, 0.1) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 100%)",
-              }}
-            />
-            <div
-              className="absolute inset-16 rounded-full border border-cyan-400/15"
-              style={{
-                background:
-                  "radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.05) 0%, transparent 60%)",
-              }}
-            />
-            {/* Core highlight */}
-            <div
-              className="absolute top-1/4 left-1/4 w-1/3 h-1/4 rounded-full opacity-40"
-              style={{
-                background:
-                  "radial-gradient(ellipse, rgba(255, 255, 255, 0.2) 0%, transparent 70%)",
-                filter: "blur(10px)",
-              }}
-            />
+
+            {/* Terminal chrome */}
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/[0.06] bg-white/[0.02]">
+              <div className="flex gap-1.5">
+                <span className="w-3 h-3 rounded-full bg-red-500/70" />
+                <span className="w-3 h-3 rounded-full bg-yellow-500/70" />
+                <span className="w-3 h-3 rounded-full bg-green-500/70" />
+              </div>
+              <span className="ml-3 font-mono text-xs text-white/40">
+                ~/harsh/portfolio.ts
+              </span>
+              <span className="ml-auto flex items-center gap-1.5 text-[10px] font-mono text-cyan-400/70">
+                <Sparkles className="h-3 w-3" />
+                LIVE
+              </span>
+            </div>
+
+            {/* Code body */}
+            <div className="p-5 font-mono text-[13px] leading-[1.7] overflow-hidden">
+              {CODE_LINES.map((line, i) => {
+                if (line.comment) {
+                  return (
+                    <div key={i} className="text-white/25 italic">
+                      {line.comment}
+                    </div>
+                  );
+                }
+                if (line.raw) {
+                  return (
+                    <div key={i} className="text-cyan-300">
+                      {line.p}
+                    </div>
+                  );
+                }
+                if (line.p) {
+                  return (
+                    <div key={i} className="text-white/90">
+                      <span className="text-violet-400">{line.p}</span>{" "}
+                      <span className="text-cyan-300">{line.k}</span>{" "}
+                      <span className="text-white/50">{line.op}</span>{" "}
+                      <span className="text-yellow-300">{line.v}</span>
+                    </div>
+                  );
+                }
+                if (line.key) {
+                  return (
+                    <div key={i} style={{ paddingLeft: `${line.indent! * 16}px` }}>
+                      <span className="text-blue-300">{line.key}</span>
+                      <span className="text-white/50">: </span>
+                      <span
+                        className={
+                          line.accent
+                            ? "text-emerald-300"
+                            : "text-orange-300"
+                        }
+                      >
+                        {line.val}
+                      </span>
+                      <span className="text-white/50">,</span>
+                    </div>
+                  );
+                }
+                return <div key={i}>&nbsp;</div>;
+              })}
+            </div>
+
+            {/* Status bar */}
+            <div className="flex items-center justify-between px-4 py-2 border-t border-white/[0.06] bg-white/[0.02] font-mono text-[10px] text-white/40">
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                Ready
+              </span>
+              <span>TypeScript • UTF-8 • LF</span>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Tech marquee */}
+      <div className="absolute bottom-20 left-0 right-0 z-0 overflow-hidden mask-fade">
+        <div
+          className="flex gap-8 whitespace-nowrap opacity-40"
+          style={{ animation: "marquee 40s linear infinite" }}
+        >
+          {[...TECH_STACK, ...TECH_STACK].map((t, i) => (
+            <span
+              key={i}
+              className="font-mono text-sm text-white/50 tracking-wide"
+            >
+              <span className="text-cyan-400/60 mr-1.5">◆</span>
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
-        <p className="text-xs text-white/30 font-mono tracking-widest">SCROLL</p>
-        <ArrowDown className="h-4 w-4 text-cyan-400/60" />
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 animate-bounce">
+        <p className="text-[10px] text-white/30 font-mono tracking-[0.3em]">
+          SCROLL
+        </p>
+        <ArrowDown className="h-3.5 w-3.5 text-cyan-400/60" />
       </div>
     </section>
   );

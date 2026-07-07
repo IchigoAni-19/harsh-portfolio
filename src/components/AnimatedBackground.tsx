@@ -474,7 +474,7 @@ const AnimatedBackground = () => {
   }, []);
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-0">
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       {/* Deep space base */}
       <div
         className="absolute inset-0"
@@ -484,6 +484,15 @@ const AnimatedBackground = () => {
         ref={canvasRef}
         className="absolute inset-0"
         style={{ width: "100%", height: "100%" }}
+      />
+      {/* Spline 3D orb — cursor responsive, blended into cosmic scene */}
+      <iframe
+        src="https://my.spline.design/orb-rx69OdZUaqur4OGhxmpkh3QS/"
+        frameBorder="0"
+        title="3D Orb"
+        loading="lazy"
+        className="absolute inset-0 h-full w-full pointer-events-auto"
+        style={{ mixBlendMode: "screen", opacity: 0.85 }}
       />
     </div>
   );

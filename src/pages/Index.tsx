@@ -8,6 +8,7 @@ import Timeline from "@/components/Timeline";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import AnimatedBackground from "@/components/AnimatedBackground";
+import DeveloperActivity from "@/components/DeveloperActivity";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);
@@ -32,6 +33,7 @@ const Index = () => {
         <main className="relative z-10">
           <Hero />
           <About />
+          <DeveloperActivity />
           <Projects />
           <Timeline />
           <Contact />

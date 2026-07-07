@@ -31,14 +31,10 @@ const Navbar = () => {
   return (
     <nav
       ref={navRef}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-[#080814]/80 backdrop-blur-2xl border-b border-white/8 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
-          : "bg-gradient-to-b from-[#080814]/60 to-transparent backdrop-blur-md"
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-transparent"
     >
       {/* Gradient top line */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent opacity-50" />
 
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 sm:px-6 py-3.5">
         {/* Logo - code sign + name */}

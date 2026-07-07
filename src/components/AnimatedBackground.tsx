@@ -45,7 +45,6 @@ const AnimatedBackground = () => {
     resize();
     window.addEventListener("resize", resize);
 
-    // Create stars
     const STAR_COUNT = 220;
     const stars: Star[] = Array.from({ length: STAR_COUNT }, () => ({
       x: Math.random() * W,
@@ -58,7 +57,6 @@ const AnimatedBackground = () => {
       twinkleSpeed: Math.random() * 0.008 + 0.003,
     }));
 
-    // Create planets
     const planetDefs: Planet[] = [
       {
         x: W * 0.82,
@@ -100,7 +98,6 @@ const AnimatedBackground = () => {
       ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(200, 220, 255, ${s.opacity})`;
       ctx.fill();
-      // Cross sparkle for larger stars
       if (s.radius > 0.9) {
         ctx.beginPath();
         ctx.moveTo(s.x - s.radius * 2.5, s.y);
@@ -113,8 +110,16 @@ const AnimatedBackground = () => {
       }
     };
 
+    const lightenColor = (color: string, amount: number) => {
+      const m = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (!m) return color;
+      const r = Math.min(255, parseInt(m[1]) + Math.round(amount * 200));
+      const g = Math.min(255, parseInt(m[2]) + Math.round(amount * 200));
+      const b = Math.min(255, parseInt(m[3]) + Math.round(amount * 200));
+      return `rgba(${r}, ${g}, ${b}, 0.9)`;
+    };
+
     const drawPlanet = (p: Planet) => {
-      // Glow
       const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 2.5);
       grd.addColorStop(0, p.glowColor);
       grd.addColorStop(1, "rgba(0,0,0,0)");
@@ -123,7 +128,6 @@ const AnimatedBackground = () => {
       ctx.fillStyle = grd;
       ctx.fill();
 
-      // Planet body gradient
       const bodyGrd = ctx.createRadialGradient(
         p.x - p.radius * 0.3,
         p.y - p.radius * 0.3,
@@ -139,7 +143,6 @@ const AnimatedBackground = () => {
       ctx.fillStyle = bodyGrd;
       ctx.fill();
 
-      // Ring
       if (p.hasRing) {
         ctx.save();
         ctx.translate(p.x, p.y);
@@ -157,7 +160,6 @@ const AnimatedBackground = () => {
         ctx.restore();
       }
 
-      // Surface sheen
       const sheenGrd = ctx.createLinearGradient(
         p.x - p.radius,
         p.y - p.radius,
@@ -172,65 +174,41 @@ const AnimatedBackground = () => {
       ctx.fill();
     };
 
-    const lightenColor = (color: string, amount: number) => {
-      const m = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-      if (!m) return color;
-      const r = Math.min(255, parseInt(m[1]) + Math.round(amount * 200));
-      const g = Math.min(255, parseInt(m[2]) + Math.round(amount * 200));
-      const b = Math.min(255, parseInt(m[3]) + Math.round(amount * 200));
-      return `rgba(${r}, ${g}, ${b}, 0.9)`;
-    };
-
     const draw = () => {
-      // Background
+      // Use clearRect so the Spline iframe shows through underneath
       ctx.clearRect(0, 0, W, H);
-      const bg = ctx.createLinearGradient(0, 0, 0, H);
-      bg.addColorStop(0, "#05050f");
-      bg.addColorStop(0.4, "#080814");
-      bg.addColorStop(0.7, "#0a0818");
-      bg.addColorStop(1, "#06060f");
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, W, H);
 
-      // Subtle nebula glow
+      // Subtle nebula glows (semi-transparent so Spline shows through)
       const nebula1 = ctx.createRadialGradient(W * 0.75, H * 0.2, 0, W * 0.75, H * 0.2, W * 0.35);
-      nebula1.addColorStop(0, "rgba(60, 20, 120, 0.08)");
+      nebula1.addColorStop(0, "rgba(60, 20, 120, 0.05)");
       nebula1.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = nebula1;
       ctx.fillRect(0, 0, W, H);
 
       const nebula2 = ctx.createRadialGradient(W * 0.2, H * 0.65, 0, W * 0.2, H * 0.65, W * 0.3);
-      nebula2.addColorStop(0, "rgba(10, 40, 90, 0.1)");
+      nebula2.addColorStop(0, "rgba(10, 40, 90, 0.07)");
       nebula2.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = nebula2;
       ctx.fillRect(0, 0, W, H);
 
-      // Stars
       for (const s of stars) {
-        // Twinkle
         s.opacity += s.twinkleSpeed * s.opacityDir;
         if (s.opacity > 0.85 || s.opacity < 0.1) s.opacityDir *= -1;
-
-        // Move
         s.x += s.vx;
         s.y += s.vy;
         if (s.x < -2) s.x = W + 2;
         if (s.x > W + 2) s.x = -2;
         if (s.y < -2) s.y = H + 2;
         if (s.y > H + 2) s.y = -2;
-
         drawStar(s);
       }
 
-      // Planets
       for (const p of planetDefs) {
         p.x += p.vx;
         p.y += p.vy;
-        // Bounce off edges with margin
         const margin = p.radius * 4;
         if (p.x < margin || p.x > W - margin) p.vx *= -1;
         if (p.y < margin || p.y > H - margin) p.vy *= -1;
-
         drawPlanet(p);
       }
 
@@ -246,11 +224,35 @@ const AnimatedBackground = () => {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="pointer-events-none fixed inset-0 z-0"
-      style={{ width: "100%", height: "100%" }}
-    />
+    <div className="pointer-events-none fixed inset-0 z-0">
+      {/* Deep space base background */}
+      <div
+        className="absolute inset-0"
+        style={{ background: "linear-gradient(180deg, #05050f 0%, #080814 40%, #0a0818 70%, #06060f 100%)" }}
+      />
+
+      {/* Spline interactive orb — blended into background */}
+      <div
+        className="absolute inset-0"
+        style={{ opacity: 0.3, mixBlendMode: "screen" }}
+      >
+        <iframe
+          src="https://my.spline.design/orb-rx69OdZUaqur4OGhxmpkh3QS/"
+          frameBorder="0"
+          width="100%"
+          height="100%"
+          title="Background Orb"
+          style={{ pointerEvents: "none" }}
+        />
+      </div>
+
+      {/* Stars + planets canvas (transparent bg so Spline shows through) */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0"
+        style={{ width: "100%", height: "100%" }}
+      />
+    </div>
   );
 };
 

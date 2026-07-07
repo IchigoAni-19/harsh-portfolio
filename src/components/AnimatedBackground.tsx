@@ -270,6 +270,97 @@ const AnimatedBackground = () => {
       ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
       ctx.fillStyle = sheenGrd;
       ctx.fill();
+
+      // Atmospheric bands
+      const px = p as PlanetX;
+      if (px.bandColor) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.clip();
+        for (let i = -2; i <= 2; i++) {
+          ctx.beginPath();
+          ctx.ellipse(p.x, p.y + i * p.radius * 0.35, p.radius, p.radius * 0.12, 0, 0, Math.PI * 2);
+          ctx.fillStyle = px.bandColor;
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      // Atmosphere halo
+      const atmo = ctx.createRadialGradient(p.x, p.y, p.radius * 0.95, p.x, p.y, p.radius * 1.15);
+      atmo.addColorStop(0, "rgba(180,220,255,0)");
+      atmo.addColorStop(0.6, "rgba(180,220,255,0.15)");
+      atmo.addColorStop(1, "rgba(180,220,255,0)");
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius * 1.15, 0, Math.PI * 2);
+      ctx.fillStyle = atmo;
+      ctx.fill();
+
+      // Moons
+      if (px.moons) {
+        for (const m of px.moons) {
+          m.angle += m.speed;
+          const mx = p.x + Math.cos(m.angle) * m.dist;
+          const my = p.y + Math.sin(m.angle) * m.dist * 0.5;
+          const mGrd = ctx.createRadialGradient(mx, my, 0, mx, my, m.radius * 2.5);
+          mGrd.addColorStop(0, m.color);
+          mGrd.addColorStop(1, "rgba(0,0,0,0)");
+          ctx.beginPath();
+          ctx.arc(mx, my, m.radius * 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = mGrd;
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(mx, my, m.radius, 0, Math.PI * 2);
+          ctx.fillStyle = m.color;
+          ctx.fill();
+        }
+      }
+    };
+
+    const drawBlackHole = (b: typeof blackHole) => {
+      b.rotation += 0.012;
+      // Gravitational lensing glow
+      const lens = ctx.createRadialGradient(b.x, b.y, b.radius, b.x, b.y, b.radius * 8);
+      lens.addColorStop(0, "rgba(20,10,40,0.9)");
+      lens.addColorStop(0.4, "rgba(80,30,120,0.15)");
+      lens.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.radius * 8, 0, Math.PI * 2);
+      ctx.fillStyle = lens;
+      ctx.fill();
+
+      // Accretion disk
+      ctx.save();
+      ctx.translate(b.x, b.y);
+      ctx.rotate(b.rotation);
+      ctx.scale(1, 0.25);
+      for (let i = 0; i < 5; i++) {
+        const r = b.radius * (2 + i * 0.5);
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        const hue = 25 + i * 8;
+        ctx.strokeStyle = `hsla(${hue}, 100%, ${60 - i * 5}%, ${0.5 - i * 0.08})`;
+        ctx.lineWidth = 3 - i * 0.3;
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Photon ring
+      const ring = ctx.createRadialGradient(b.x, b.y, b.radius * 1.1, b.x, b.y, b.radius * 1.6);
+      ring.addColorStop(0, "rgba(255,180,80,0)");
+      ring.addColorStop(0.5, "rgba(255,200,120,0.6)");
+      ring.addColorStop(1, "rgba(255,140,40,0)");
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.radius * 1.6, 0, Math.PI * 2);
+      ctx.fillStyle = ring;
+      ctx.fill();
+
+      // Event horizon
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "#000";
+      ctx.fill();
     };
 
     const drawGalaxy = (g: Galaxy) => {

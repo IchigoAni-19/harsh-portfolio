@@ -4,17 +4,19 @@ import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 
 const links = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Projects", href: "#projects" },
-  { label: "Skills", href: "#skills" },
-  { label: "Journey", href: "#journey" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "#home", id: "home" },
+  { label: "About", href: "#about", id: "about" },
+  { label: "Projects", href: "#projects", id: "projects" },
+  { label: "Skills", href: "#skills", id: "skills" },
+  { label: "Journey", href: "#journey", id: "journey" },
+  { label: "Contact", href: "#contact", id: "contact" },
 ];
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [activeId, setActiveId] = useState("home");
   const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -24,52 +26,89 @@ const Navbar = () => {
       { y: 0, opacity: 1, duration: 1, delay: 0.4, ease: "power3.out" }
     );
 
-    const handleScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 40);
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(h > 0 ? Math.min(100, (y / h) * 100) : 0);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Active section observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActiveId(e.target.id);
+        });
+      },
+      { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
+    );
+    links.forEach((l) => {
+      const el = document.getElementById(l.id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
   }, []);
 
   return (
     <nav
       ref={navRef}
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-transparent"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-[#05070d]/70 backdrop-blur-xl border-b border-white/[0.06] shadow-[0_10px_40px_rgba(0,0,0,0.4)]"
+          : "bg-transparent"
+      }`}
     >
       {/* Gradient top line */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent opacity-50" />
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
 
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 sm:px-6 py-3.5">
-        {/* Logo - code sign + name */}
+        {/* Logo */}
         <a
           href="#home"
           className="group flex items-center gap-2.5 transition-all duration-300 hover:scale-105"
         >
-          {/* Code bracket icon */}
-          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 group-hover:border-cyan-400/60 transition-all duration-300 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 group-hover:border-cyan-400/60 transition-all duration-300 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.4)]">
             <span className="font-mono text-sm font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
               {"</>"}
             </span>
           </div>
-          {/* Name */}
           <span className="font-bold text-xl tracking-wide bg-gradient-to-r from-white via-cyan-100 to-blue-200 bg-clip-text text-transparent">
             Harsh
           </span>
         </a>
 
         {/* Desktop Nav Links */}
-        <div className="hidden md:flex items-center gap-0.5">
-          {links.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="group relative px-4 py-2 text-sm text-white/60 hover:text-white transition-colors duration-300 rounded-lg hover:bg-white/5"
-            >
-              {l.label}
-              <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-[1.5px] bg-gradient-to-r from-cyan-400 to-blue-400 group-hover:w-3/5 transition-all duration-300 rounded-full" />
-            </a>
-          ))}
+        <div className="hidden md:flex items-center gap-0.5 p-1 rounded-full border border-white/[0.05] bg-white/[0.02] backdrop-blur-sm">
+          {links.map((l) => {
+            const active = activeId === l.id;
+            return (
+              <a
+                key={l.href}
+                href={l.href}
+                className={`relative px-4 py-1.5 text-sm rounded-full transition-all duration-300 ${
+                  active
+                    ? "text-white"
+                    : "text-white/55 hover:text-white/90"
+                }`}
+              >
+                {active && (
+                  <span
+                    className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 shadow-[0_0_15px_rgba(6,182,212,0.25)]"
+                    aria-hidden
+                  />
+                )}
+                <span className="relative">{l.label}</span>
+              </a>
+            );
+          })}
         </div>
 
-        {/* Right: Social icons + Contact Me */}
+        {/* Right */}
         <div className="hidden md:flex items-center gap-2">
           <a
             href="https://github.com/IchigoAni-19"
@@ -93,7 +132,7 @@ const Navbar = () => {
           <Button
             asChild
             size="sm"
-            className="ml-1 h-8 px-4 text-xs font-semibold bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 border-0 shadow-[0_0_18px_rgba(6,182,212,0.3)] hover:shadow-[0_0_28px_rgba(6,182,212,0.45)] transition-all duration-400 rounded-lg"
+            className="ml-1 h-8 px-4 text-xs font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 border-0 shadow-[0_0_18px_rgba(6,182,212,0.35)] hover:shadow-[0_0_28px_rgba(6,182,212,0.55)] transition-all duration-300 rounded-lg"
           >
             <a href="#contact">Contact Me</a>
           </Button>
@@ -110,16 +149,28 @@ const Navbar = () => {
         </Button>
       </div>
 
+      {/* Scroll progress bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/[0.03]">
+        <div
+          className="h-full bg-gradient-to-r from-cyan-400 via-blue-400 to-violet-400 shadow-[0_0_10px_rgba(6,182,212,0.6)] transition-[width] duration-150"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
       {/* Mobile Menu */}
       {open && (
-        <div className="fixed inset-0 top-[57px] z-40 bg-[#080814]/98 backdrop-blur-2xl md:hidden">
+        <div className="fixed inset-0 top-[57px] z-40 bg-[#05070d]/98 backdrop-blur-2xl md:hidden">
           <div className="flex flex-col items-center justify-center h-full gap-1">
             {links.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="w-full max-w-xs text-center text-xl font-medium text-white/70 hover:text-white transition-colors duration-300 py-4 border-b border-white/5"
+                className={`w-full max-w-xs text-center text-xl font-medium py-4 border-b border-white/5 transition-colors ${
+                  activeId === l.id
+                    ? "text-cyan-300"
+                    : "text-white/70 hover:text-white"
+                }`}
               >
                 {l.label}
               </a>
@@ -147,7 +198,7 @@ const Navbar = () => {
             <Button
               asChild
               size="lg"
-              className="mt-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 border-0"
+              className="mt-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 border-0"
               onClick={() => setOpen(false)}
             >
               <a href="#contact">Contact Me</a>

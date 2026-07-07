@@ -454,6 +454,14 @@ const AnimatedBackground = () => {
         drawPlanet(p);
       }
 
+      // Black hole
+      blackHole.x += blackHole.vx;
+      blackHole.y += blackHole.vy;
+      const bhMargin = blackHole.radius * 10;
+      if (blackHole.x < bhMargin || blackHole.x > W - bhMargin) blackHole.vx *= -1;
+      if (blackHole.y < bhMargin || blackHole.y > H - bhMargin) blackHole.vy *= -1;
+      drawBlackHole(blackHole);
+
       animId = requestAnimationFrame(draw);
     };
 

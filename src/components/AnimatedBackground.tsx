@@ -175,18 +175,17 @@ const AnimatedBackground = () => {
     };
 
     const draw = () => {
-      // Use clearRect so the Spline iframe shows through underneath
       ctx.clearRect(0, 0, W, H);
 
-      // Subtle nebula glows (semi-transparent so Spline shows through)
+      // Subtle nebula glows
       const nebula1 = ctx.createRadialGradient(W * 0.75, H * 0.2, 0, W * 0.75, H * 0.2, W * 0.35);
-      nebula1.addColorStop(0, "rgba(60, 20, 120, 0.05)");
+      nebula1.addColorStop(0, "rgba(60, 20, 120, 0.06)");
       nebula1.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = nebula1;
       ctx.fillRect(0, 0, W, H);
 
       const nebula2 = ctx.createRadialGradient(W * 0.2, H * 0.65, 0, W * 0.2, H * 0.65, W * 0.3);
-      nebula2.addColorStop(0, "rgba(10, 40, 90, 0.07)");
+      nebula2.addColorStop(0, "rgba(10, 40, 90, 0.08)");
       nebula2.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = nebula2;
       ctx.fillRect(0, 0, W, H);
@@ -231,22 +230,7 @@ const AnimatedBackground = () => {
         style={{ background: "linear-gradient(180deg, #05050f 0%, #080814 40%, #0a0818 70%, #06060f 100%)" }}
       />
 
-      {/* Spline interactive orb — blended into background */}
-      <div
-        className="absolute inset-0"
-        style={{ opacity: 0.3, mixBlendMode: "screen" }}
-      >
-        <iframe
-          src="https://my.spline.design/orb-rx69OdZUaqur4OGhxmpkh3QS/"
-          frameBorder="0"
-          width="100%"
-          height="100%"
-          title="Background Orb"
-          style={{ pointerEvents: "none" }}
-        />
-      </div>
-
-      {/* Stars + planets canvas (transparent bg so Spline shows through) */}
+      {/* Stars + planets canvas */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0"

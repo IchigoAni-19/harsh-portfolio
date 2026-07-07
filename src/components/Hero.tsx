@@ -218,7 +218,7 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Right - Spline 3D Interactive Orb */}
+        {/* Right - Decorative glowing orb */}
         <div
           ref={splineContainerRef}
           className="relative flex justify-center lg:justify-end items-center min-h-[400px] lg:min-h-[560px]"
@@ -232,14 +232,38 @@ const Hero = () => {
             }}
           />
 
-          <div className="relative w-full h-[400px] lg:h-[560px] rounded-3xl overflow-hidden">
-            <iframe
-              src="https://my.spline.design/reactiveorb-lBmPVC60WGcCyWrDfTG92lbB/"
-              frameBorder="0"
-              width="100%"
-              height="100%"
-              className="w-full h-full"
-              title="Interactive 3D Orb"
+          {/* Static glowing orb */}
+          <div className="relative w-[320px] h-[320px] lg:w-[420px] lg:h-[420px]">
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background:
+                  "radial-gradient(circle at 40% 40%, rgba(100, 200, 255, 0.15) 0%, rgba(6, 182, 212, 0.08) 40%, transparent 70%)",
+                filter: "blur(60px)",
+              }}
+            />
+            <div
+              className="absolute inset-8 rounded-full border border-cyan-500/20"
+              style={{
+                background:
+                  "radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.08) 0%, transparent 50%), radial-gradient(circle at center, rgba(6, 182, 212, 0.1) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 100%)",
+              }}
+            />
+            <div
+              className="absolute inset-16 rounded-full border border-cyan-400/15"
+              style={{
+                background:
+                  "radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.05) 0%, transparent 60%)",
+              }}
+            />
+            {/* Core highlight */}
+            <div
+              className="absolute top-1/4 left-1/4 w-1/3 h-1/4 rounded-full opacity-40"
+              style={{
+                background:
+                  "radial-gradient(ellipse, rgba(255, 255, 255, 0.2) 0%, transparent 70%)",
+                filter: "blur(10px)",
+              }}
             />
           </div>
         </div>

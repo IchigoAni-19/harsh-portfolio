@@ -10,6 +10,7 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import DeveloperActivity from "@/components/DeveloperActivity";
+import CometCursor from "@/components/CometCursor";
 
 const Index = () => {
   const [loaded, setLoaded] = useState(false);

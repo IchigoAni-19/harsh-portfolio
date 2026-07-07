@@ -44,6 +44,7 @@ const Index = () => {
 
         {/* Footer */}
         <Footer />
+        <CometCursor />
       </div>
     </>
   );

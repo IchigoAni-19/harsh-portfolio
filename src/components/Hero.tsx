@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Download, ArrowDown, Mail, Sparkles } from "lucide-react";
+import { Download, ArrowDown, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 
@@ -7,25 +7,8 @@ const FULL_NAME = "Harsh Patel";
 
 const ROLES = [
   "Full-Stack Engineer",
-  "AI Integration Specialist",
-  "Cloud & Backend Architect",
+  "AI Integration & Backend Architect",
   "Problem Solver",
-];
-
-const TECH_STACK = [
-  "React", "TypeScript", "Node.js", "Express", "MongoDB",
-  "Python", "Gemini AI", "Tailwind", "Vercel", "Linux", "Git",
-];
-
-const CODE_LINES = [
-  { p: "const", k: "harsh", op: "=", v: "{" },
-  { indent: 1, key: "role", val: "'Full-Stack Engineer'" },
-  { indent: 1, key: "stack", val: "['React', 'Node', 'AI']" },
-  { indent: 1, key: "graduating", val: "2026" },
-  { indent: 1, key: "status", val: "'available'", accent: true },
-  { p: "}", raw: true },
-  { p: "" },
-  { comment: "// building the future, one commit at a time" },
 ];
 
 const Hero = ({ loaded = false }: { loaded?: boolean }) => {
@@ -34,7 +17,6 @@ const Hero = ({ loaded = false }: { loaded?: boolean }) => {
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
-  const rightRef = useRef<HTMLDivElement>(null);
   const cursorGlow = useRef<HTMLDivElement>(null);
 
   const [typed, setTyped] = useState("");
@@ -97,12 +79,6 @@ const Hero = ({ loaded = false }: { loaded?: boolean }) => {
           { scale: 0.9, opacity: 0 },
           { scale: 1, opacity: 1, duration: 0.5, stagger: 0.1 },
           "-=0.3"
-        )
-        .fromTo(
-          rightRef.current,
-          { x: 60, opacity: 0 },
-          { x: 0, opacity: 1, duration: 1 },
-          "-=1"
         );
 
       gsap.to("[data-hero-orb]", {
@@ -186,11 +162,10 @@ const Hero = ({ loaded = false }: { loaded?: boolean }) => {
         />
       ))}
 
-      <div className="relative z-10 mx-auto max-w-7xl w-full grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16 items-center">
-        {/* Left content */}
-        <div className="text-center lg:text-left">
+      <div className="relative z-10 mx-auto max-w-5xl w-full text-center">
+        <div className="mx-auto max-w-3xl">
           {/* Availability badge */}
-          <div
+          {/* <div
             data-hero-badge
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/5 backdrop-blur-sm mb-6"
           >
@@ -201,7 +176,7 @@ const Hero = ({ loaded = false }: { loaded?: boolean }) => {
             <span className="font-mono text-xs text-emerald-300/90 tracking-wide">
               Available for opportunities
             </span>
-          </div>
+          </div> */}
 
           <p className="font-mono text-sm text-cyan-400/70 mb-3 tracking-[0.25em] uppercase">
             Hi, I'm
@@ -235,7 +210,7 @@ const Hero = ({ loaded = false }: { loaded?: boolean }) => {
 
           <p
             ref={descRef}
-            className="text-white/55 max-w-lg mx-auto lg:mx-0 mb-9 leading-relaxed text-base sm:text-lg"
+            className="text-white/55 max-w-xl mx-auto mb-9 leading-relaxed text-base sm:text-lg"
           >
             I build AI-powered platforms and full-stack systems that feel fast,
             secure, and delightful — from intelligent resume tooling to
@@ -245,7 +220,7 @@ const Hero = ({ loaded = false }: { loaded?: boolean }) => {
           {/* CTA Buttons */}
           <div
             ref={ctaRef}
-            className="flex flex-wrap justify-center lg:justify-start gap-3"
+            className="flex flex-wrap justify-center gap-3"
           >
             <Button
               data-hero-cta
@@ -266,8 +241,8 @@ const Hero = ({ loaded = false }: { loaded?: boolean }) => {
               className="group px-7 py-6 text-base font-semibold border-cyan-500/40 text-cyan-300 bg-cyan-500/5 hover:bg-cyan-500/15 hover:border-cyan-400/70 hover:text-cyan-200 transition-all duration-300 hover:-translate-y-0.5"
             >
               <a
-                href="/Harsh_Patel_Resume.pdf"
-                download="Harsh_Patel_Resume.pdf"
+                href="/resume.pdf"
+                download="resume.pdf"
               >
                 <Download className="mr-2 h-4 w-4 transition-transform group-hover:translate-y-0.5" />
                 Download Resume
@@ -275,159 +250,6 @@ const Hero = ({ loaded = false }: { loaded?: boolean }) => {
             </Button>
           </div>
 
-          {/* Stats */}
-          <div
-            data-hero-cta
-            className="flex flex-wrap justify-center lg:justify-start gap-8 mt-10 pt-8 border-t border-white/[0.06]"
-          >
-            {[
-              { value: "3+", label: "Projects Shipped" },
-              { value: "2026", label: "Graduating" },
-              { value: "AI + Cloud", label: "Focus Areas" },
-            ].map((s) => (
-              <div key={s.label} className="text-center lg:text-left">
-                <div className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-                  {s.value}
-                </div>
-                <div className="text-xs text-white/40 font-mono mt-0.5 tracking-wider uppercase">
-                  {s.label}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Right - Terminal / Code card */}
-        <div ref={rightRef} className="relative flex justify-center lg:justify-end">
-          {/* Ambient glow behind card */}
-          <div
-            className="absolute inset-0 opacity-60 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(circle at 60% 40%, hsla(190,90%,55%,0.25) 0%, transparent 60%)",
-              filter: "blur(70px)",
-            }}
-          />
-
-          {/* Orbiting glow ring */}
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full border border-cyan-500/10 pointer-events-none"
-            style={{ animation: "spin 40s linear infinite" }}
-          >
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.8)]" />
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.8)]" />
-          </div>
-
-          {/* Code Card */}
-          <div className="relative w-full max-w-[460px] rounded-2xl bg-[#0a0f1e]/80 backdrop-blur-xl border border-white/[0.08] shadow-[0_20px_80px_rgba(6,182,212,0.15)] overflow-hidden group hover:border-cyan-500/30 transition-all duration-500">
-            {/* Gradient border glow on hover */}
-            <div
-              className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              style={{
-                background:
-                  "linear-gradient(135deg, hsla(190,90%,60%,0.4), transparent 40%, transparent 60%, hsla(240,80%,65%,0.4))",
-                mask:
-                  "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-                WebkitMask:
-                  "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-                WebkitMaskComposite: "xor",
-                maskComposite: "exclude",
-                padding: "1px",
-              }}
-            />
-
-            {/* Terminal chrome */}
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/[0.06] bg-white/[0.02]">
-              <div className="flex gap-1.5">
-                <span className="w-3 h-3 rounded-full bg-red-500/70" />
-                <span className="w-3 h-3 rounded-full bg-yellow-500/70" />
-                <span className="w-3 h-3 rounded-full bg-green-500/70" />
-              </div>
-              <span className="ml-3 font-mono text-xs text-white/40">
-                ~/harsh/portfolio.ts
-              </span>
-              <span className="ml-auto flex items-center gap-1.5 text-[10px] font-mono text-cyan-400/70">
-                <Sparkles className="h-3 w-3" />
-                LIVE
-              </span>
-            </div>
-
-            {/* Code body */}
-            <div className="p-5 font-mono text-[13px] leading-[1.7] overflow-hidden">
-              {CODE_LINES.map((line, i) => {
-                if (line.comment) {
-                  return (
-                    <div key={i} className="text-white/25 italic">
-                      {line.comment}
-                    </div>
-                  );
-                }
-                if (line.raw) {
-                  return (
-                    <div key={i} className="text-cyan-300">
-                      {line.p}
-                    </div>
-                  );
-                }
-                if (line.p) {
-                  return (
-                    <div key={i} className="text-white/90">
-                      <span className="text-violet-400">{line.p}</span>{" "}
-                      <span className="text-cyan-300">{line.k}</span>{" "}
-                      <span className="text-white/50">{line.op}</span>{" "}
-                      <span className="text-yellow-300">{line.v}</span>
-                    </div>
-                  );
-                }
-                if (line.key) {
-                  return (
-                    <div key={i} style={{ paddingLeft: `${line.indent! * 16}px` }}>
-                      <span className="text-blue-300">{line.key}</span>
-                      <span className="text-white/50">: </span>
-                      <span
-                        className={
-                          line.accent
-                            ? "text-emerald-300"
-                            : "text-orange-300"
-                        }
-                      >
-                        {line.val}
-                      </span>
-                      <span className="text-white/50">,</span>
-                    </div>
-                  );
-                }
-                return <div key={i}>&nbsp;</div>;
-              })}
-            </div>
-
-            {/* Status bar */}
-            <div className="flex items-center justify-between px-4 py-2 border-t border-white/[0.06] bg-white/[0.02] font-mono text-[10px] text-white/40">
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                Ready
-              </span>
-              <span>TypeScript • UTF-8 • LF</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tech marquee */}
-      <div className="absolute bottom-20 left-0 right-0 z-0 overflow-hidden mask-fade">
-        <div
-          className="flex gap-8 whitespace-nowrap opacity-40"
-          style={{ animation: "marquee 40s linear infinite" }}
-        >
-          {[...TECH_STACK, ...TECH_STACK].map((t, i) => (
-            <span
-              key={i}
-              className="font-mono text-sm text-white/50 tracking-wide"
-            >
-              <span className="text-cyan-400/60 mr-1.5">◆</span>
-              {t}
-            </span>
-          ))}
         </div>
       </div>
 

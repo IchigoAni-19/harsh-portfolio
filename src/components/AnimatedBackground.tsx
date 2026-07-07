@@ -45,6 +45,7 @@ interface Galaxy {
 
 const AnimatedBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const splineRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -55,6 +56,10 @@ const AnimatedBackground = () => {
     let animId: number;
     let W = window.innerWidth;
     let H = window.innerHeight;
+    let pointerX = W * 0.5;
+    let pointerY = H * 0.42;
+    let targetPointerX = pointerX;
+    let targetPointerY = pointerY;
 
     const resize = () => {
       W = window.innerWidth;
@@ -65,23 +70,34 @@ const AnimatedBackground = () => {
     resize();
     window.addEventListener("resize", resize);
 
-    const STAR_COUNT = 240;
+    const onPointerMove = (event: PointerEvent) => {
+      targetPointerX = event.clientX;
+      targetPointerY = event.clientY;
+    };
+    const onPointerLeave = () => {
+      targetPointerX = W * 0.5;
+      targetPointerY = H * 0.42;
+    };
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerleave", onPointerLeave);
+
+    const STAR_COUNT = 320;
     const stars: Star[] = Array.from({ length: STAR_COUNT }, () => ({
       x: Math.random() * W,
       y: Math.random() * H,
-      radius: Math.random() * 1.2 + 0.2,
-      vx: (Math.random() - 0.5) * 0.12,
-      vy: (Math.random() - 0.5) * 0.08,
-      opacity: Math.random() * 0.6 + 0.2,
+      radius: Math.random() * 1.25 + 0.15,
+      vx: (Math.random() - 0.5) * 0.18,
+      vy: (Math.random() - 0.5) * 0.12,
+      opacity: Math.random() * 0.65 + 0.18,
       opacityDir: Math.random() > 0.5 ? 1 : -1,
-      twinkleSpeed: Math.random() * 0.008 + 0.003,
+      twinkleSpeed: Math.random() * 0.009 + 0.003,
     }));
 
     // Sun — large glowing ball drifting slowly
     const sun: Sun = {
       x: W * 0.08,
       y: H * 0.12,
-      radius: 42,
+      radius: 44,
       vx: 0.008,
       vy: 0.005,
       pulse: 0,
@@ -101,13 +117,13 @@ const AnimatedBackground = () => {
         ],
       },
       {
-        x: W * 0.15, y: H * 0.72, radius: 22, vx: -0.018, vy: -0.01,
+        x: W * 0.15, y: H * 0.72, radius: 24, vx: -0.018, vy: -0.01,
         color: "rgba(30, 60, 110, 0.9)", glowColor: "rgba(50, 100, 200, 0.3)",
         hasRing: false, ringTilt: 0, rotation: 0, bandColor: "rgba(120,180,255,0.18)",
         moons: [{ angle: 0.5, dist: 40, radius: 2.5, speed: 0.018, color: "rgba(230,230,240,0.85)" }],
       },
       {
-        x: W * 0.6, y: H * 0.88, radius: 14, vx: 0.012, vy: -0.015,
+        x: W * 0.6, y: H * 0.88, radius: 16, vx: 0.012, vy: -0.015,
         color: "rgba(20, 80, 80, 0.8)", glowColor: "rgba(20, 150, 150, 0.25)",
         hasRing: true, ringTilt: 0.2, rotation: 0,
         moons: [],
@@ -116,35 +132,35 @@ const AnimatedBackground = () => {
 
     // Black hole with accretion disk
     const blackHole = {
-      x: W * 0.5, y: H * 0.45, radius: 18, vx: 0.006, vy: -0.004, rotation: 0,
+      x: W * 0.56, y: H * 0.5, radius: 30, vx: 0.006, vy: -0.004, rotation: 0,
     };
 
     // Galaxies — elliptical clusters of tiny dots
     const galaxies: Galaxy[] = [
       {
-        x: W * 0.35,
-        y: H * 0.3,
-        radius: 70,
+        x: W * 0.34,
+        y: H * 0.28,
+        radius: 84,
         tilt: 0.35,
         angle: Math.PI * 0.15,
         rotSpeed: 0.00015,
-        stars: Array.from({ length: 120 }, () => {
+        stars: Array.from({ length: 150 }, () => {
           const a = Math.random() * Math.PI * 2;
-          const d = Math.pow(Math.random(), 0.6) * 70;
-          return { a, d, r: Math.random() * 0.8 + 0.2, opacity: Math.random() * 0.5 + 0.1 };
+          const d = Math.pow(Math.random(), 0.6) * 84;
+          return { a, d, r: Math.random() * 0.9 + 0.18, opacity: Math.random() * 0.55 + 0.1 };
         }),
       },
       {
-        x: W * 0.72,
-        y: H * 0.65,
-        radius: 55,
+        x: W * 0.74,
+        y: H * 0.66,
+        radius: 64,
         tilt: 0.25,
         angle: -Math.PI * 0.3,
         rotSpeed: -0.0001,
-        stars: Array.from({ length: 90 }, () => {
+        stars: Array.from({ length: 110 }, () => {
           const a = Math.random() * Math.PI * 2;
-          const d = Math.pow(Math.random(), 0.7) * 55;
-          return { a, d, r: Math.random() * 0.7 + 0.15, opacity: Math.random() * 0.45 + 0.08 };
+          const d = Math.pow(Math.random(), 0.7) * 64;
+          return { a, d, r: Math.random() * 0.75 + 0.12, opacity: Math.random() * 0.48 + 0.08 };
         }),
       },
     ];
@@ -321,13 +337,24 @@ const AnimatedBackground = () => {
     const drawBlackHole = (b: typeof blackHole) => {
       b.rotation += 0.012;
       // Gravitational lensing glow
-      const lens = ctx.createRadialGradient(b.x, b.y, b.radius, b.x, b.y, b.radius * 8);
-      lens.addColorStop(0, "rgba(20,10,40,0.9)");
-      lens.addColorStop(0.4, "rgba(80,30,120,0.15)");
+      const lens = ctx.createRadialGradient(b.x, b.y, b.radius, b.x, b.y, b.radius * 9);
+      lens.addColorStop(0, "rgba(3, 2, 8, 0.96)");
+      lens.addColorStop(0.35, "rgba(70, 25, 120, 0.24)");
+      lens.addColorStop(0.65, "rgba(150, 80, 220, 0.1)");
       lens.addColorStop(1, "rgba(0,0,0,0)");
       ctx.beginPath();
-      ctx.arc(b.x, b.y, b.radius * 8, 0, Math.PI * 2);
+      ctx.arc(b.x, b.y, b.radius * 9, 0, Math.PI * 2);
       ctx.fillStyle = lens;
+      ctx.fill();
+
+      const aura = ctx.createRadialGradient(b.x, b.y, b.radius * 0.6, b.x, b.y, b.radius * 5.2);
+      aura.addColorStop(0, "rgba(0,0,0,0)");
+      aura.addColorStop(0.45, "rgba(72, 22, 128, 0.16)");
+      aura.addColorStop(0.75, "rgba(135, 52, 220, 0.22)");
+      aura.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.radius * 5.2, 0, Math.PI * 2);
+      ctx.fillStyle = aura;
       ctx.fill();
 
       // Accretion disk
@@ -336,23 +363,24 @@ const AnimatedBackground = () => {
       ctx.rotate(b.rotation);
       ctx.scale(1, 0.25);
       for (let i = 0; i < 5; i++) {
-        const r = b.radius * (2 + i * 0.5);
+        const r = b.radius * (2.1 + i * 0.55);
         ctx.beginPath();
         ctx.arc(0, 0, r, 0, Math.PI * 2);
-        const hue = 25 + i * 8;
-        ctx.strokeStyle = `hsla(${hue}, 100%, ${60 - i * 5}%, ${0.5 - i * 0.08})`;
-        ctx.lineWidth = 3 - i * 0.3;
+        const hue = 265 - i * 10;
+        ctx.strokeStyle = `hsla(${hue}, 100%, ${62 - i * 5}%, ${0.48 - i * 0.07})`;
+        ctx.lineWidth = 3.2 - i * 0.3;
         ctx.stroke();
       }
       ctx.restore();
 
       // Photon ring
-      const ring = ctx.createRadialGradient(b.x, b.y, b.radius * 1.1, b.x, b.y, b.radius * 1.6);
+      const ring = ctx.createRadialGradient(b.x, b.y, b.radius * 1.1, b.x, b.y, b.radius * 1.9);
       ring.addColorStop(0, "rgba(255,180,80,0)");
-      ring.addColorStop(0.5, "rgba(255,200,120,0.6)");
+      ring.addColorStop(0.42, "rgba(180,120,255,0.36)");
+      ring.addColorStop(0.72, "rgba(255,120,220,0.24)");
       ring.addColorStop(1, "rgba(255,140,40,0)");
       ctx.beginPath();
-      ctx.arc(b.x, b.y, b.radius * 1.6, 0, Math.PI * 2);
+      ctx.arc(b.x, b.y, b.radius * 1.9, 0, Math.PI * 2);
       ctx.fillStyle = ring;
       ctx.fill();
 
@@ -395,22 +423,32 @@ const AnimatedBackground = () => {
     const draw = () => {
       ctx.clearRect(0, 0, W, H);
 
+      pointerX += (targetPointerX - pointerX) * 0.04;
+      pointerY += (targetPointerY - pointerY) * 0.04;
+
+      const normalizedX = (pointerX / W - 0.5) * 2;
+      const normalizedY = (pointerY / H - 0.5) * 2;
+
+      if (splineRef.current) {
+        splineRef.current.style.transform = `translate3d(${normalizedX * 20}px, ${normalizedY * 16}px, 0) scale(1.08)`;
+      }
+
       // Nebula glows
-      const nebula1 = ctx.createRadialGradient(W * 0.75, H * 0.2, 0, W * 0.75, H * 0.2, W * 0.35);
-      nebula1.addColorStop(0, "rgba(60, 20, 120, 0.06)");
+      const nebula1 = ctx.createRadialGradient(W * 0.72, H * 0.18, 0, W * 0.72, H * 0.18, W * 0.38);
+      nebula1.addColorStop(0, "rgba(70, 20, 140, 0.08)");
       nebula1.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = nebula1;
       ctx.fillRect(0, 0, W, H);
 
-      const nebula2 = ctx.createRadialGradient(W * 0.2, H * 0.65, 0, W * 0.2, H * 0.65, W * 0.3);
-      nebula2.addColorStop(0, "rgba(10, 40, 90, 0.08)");
+      const nebula2 = ctx.createRadialGradient(W * 0.22, H * 0.68, 0, W * 0.22, H * 0.68, W * 0.34);
+      nebula2.addColorStop(0, "rgba(10, 40, 90, 0.1)");
       nebula2.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = nebula2;
       ctx.fillRect(0, 0, W, H);
 
       // Sun warm nebula hint
-      const sunNebula = ctx.createRadialGradient(sun.x, sun.y, 0, sun.x, sun.y, W * 0.3);
-      sunNebula.addColorStop(0, "rgba(255, 160, 20, 0.04)");
+      const sunNebula = ctx.createRadialGradient(sun.x, sun.y, 0, sun.x, sun.y, W * 0.32);
+      sunNebula.addColorStop(0, "rgba(255, 160, 20, 0.05)");
       sunNebula.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = sunNebula;
       ctx.fillRect(0, 0, W, H);
@@ -457,7 +495,7 @@ const AnimatedBackground = () => {
       // Black hole
       blackHole.x += blackHole.vx;
       blackHole.y += blackHole.vy;
-      const bhMargin = blackHole.radius * 10;
+      const bhMargin = blackHole.radius * 11;
       if (blackHole.x < bhMargin || blackHole.x > W - bhMargin) blackHole.vx *= -1;
       if (blackHole.y < bhMargin || blackHole.y > H - bhMargin) blackHole.vy *= -1;
       drawBlackHole(blackHole);
@@ -470,15 +508,17 @@ const AnimatedBackground = () => {
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerleave", onPointerLeave);
     };
   }, []);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-      {/* Deep space base */}
+      {/* Deep space base with purple hues */}
       <div
         className="absolute inset-0"
-        style={{ background: "linear-gradient(180deg, #05050f 0%, #080814 40%, #0a0818 70%, #06060f 100%)" }}
+        style={{ background: "linear-gradient(180deg, #05030a 0%, #080512 40%, #0a0716 70%, #06030a 100%)" }}
       />
       <canvas
         ref={canvasRef}
@@ -491,8 +531,10 @@ const AnimatedBackground = () => {
         frameBorder="0"
         title="3D Orb"
         loading="lazy"
-        className="absolute inset-0 h-full w-full pointer-events-auto"
-        style={{ mixBlendMode: "screen", opacity: 0.85 }}
+        ref={splineRef}
+        className="absolute inset-0 h-full w-full pointer-events-none"
+        allow="fullscreen; autoplay; xr-spatial-tracking"
+        style={{ mixBlendMode: "screen", opacity: 0.9, willChange: "transform" }}
       />
     </div>
   );

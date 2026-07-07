@@ -102,7 +102,7 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
       ref={preloaderRef}
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
       style={{
-        background: "linear-gradient(135deg, hsl(220, 30%, 4%) 0%, hsl(240, 40%, 8%) 50%, hsl(260, 50%, 12%) 100%)",
+        background: "linear-gradient(135deg, hsl(260, 40%, 2%) 0%, hsl(258, 35%, 5%) 50%, hsl(255, 30%, 8%) 100%)",
       }}
     >
       {/* Background particles */}
@@ -126,7 +126,7 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
         <div className="absolute -inset-8 rounded-full bg-primary/20 blur-2xl animate-pulse" />
         <div className="relative">
           <h1 className="text-6xl sm:text-7xl font-bold tracking-tighter">
-            <span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-violet-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-purple-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
               Harsh
             </span>
           </h1>
@@ -142,7 +142,7 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
             className="h-full rounded-full"
             style={{
               width: "0%",
-              background: "linear-gradient(90deg, hsl(200, 80%, 60%), hsl(260, 80%, 60%))",
+              background: "linear-gradient(90deg, hsl(265, 89%, 78%), hsl(270, 91%, 65%))",
               boxShadow: "0 0 20px hsl(var(--primary) / 0.5)",
             }}
           />

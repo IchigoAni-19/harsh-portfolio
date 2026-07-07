@@ -12,6 +12,21 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
+  build: {
+    outDir: "dist",
+    sourcemap: false,
+    minify: "esbuild",
+    target: "es2020",
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom"],
+          animations: ["gsap"],
+          ui: ["lucide-react"],
+        },
+      },
+    },
+  },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {

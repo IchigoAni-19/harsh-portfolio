@@ -215,12 +215,7 @@ const Projects = () => {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Section Header */}
         <div data-section-header className="text-center mb-12">
-          <Badge
-            variant="outline"
-            className="mb-4 px-4 py-1.5 border-violet-500/40 text-violet-400 bg-violet-500/5"
-          >
-            PORTFOLIO
-          </Badge>
+          
           <h2 className="text-4xl sm:text-5xl font-bold mb-4">
             Featured <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500">Projects</span>
           </h2>

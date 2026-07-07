@@ -184,38 +184,6 @@ const Skills = () => {
           </div>
         </div>
 
-        {/* Category summary */}
-        <div className="mt-12 px-4 max-w-4xl mx-auto">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              { label: "Languages", count: "6", color: "cyan" },
-              { label: "Frameworks", count: "5", color: "blue" },
-              { label: "Dev Tools", count: "9", color: "emerald" },
-              { label: "Other", count: "4", color: "violet" },
-            ].map((cat) => (
-              <div
-                key={cat.label}
-                className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/4 border border-white/8"
-              >
-                <span
-                  className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                    cat.color === "cyan" ? "bg-cyan-400" :
-                    cat.color === "blue" ? "bg-blue-400" :
-                    cat.color === "emerald" ? "bg-emerald-400" :
-                    "bg-violet-400"
-                  }`}
-                />
-                <span className="text-[11px] text-white/45 font-mono">{cat.label}</span>
-                <span className={`ml-auto text-[10px] font-bold font-mono ${
-                  cat.color === "cyan" ? "text-cyan-400/60" :
-                  cat.color === "blue" ? "text-blue-400/60" :
-                  cat.color === "emerald" ? "text-emerald-400/60" :
-                  "text-violet-400/60"
-                }`}>{cat.count}</span>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   );

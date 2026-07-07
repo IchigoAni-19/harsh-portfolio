@@ -9,8 +9,11 @@ import { useToast } from "@/hooks/use-toast";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const CONTACT_EMAIL = "patelharsh12@zohomail.in";
+const FORM_SUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${CONTACT_EMAIL}`;
+
 const socialLinks = [
-  { icon: Mail, href: "mailto:patelharsh12@zohomail.in", label: "Email", color: "cyan" },
+  { icon: Mail, href: `mailto:${CONTACT_EMAIL}`, label: "Email", color: "cyan" },
   { icon: Github, href: "https://github.com/IchigoAni-19", label: "GitHub", color: "violet" },
   { icon: Linkedin, href: "https://www.linkedin.com/in/harsh-patel-bb5598268/", label: "LinkedIn", color: "blue" },
 ];
@@ -89,19 +92,51 @@ const Contact = () => {
     return () => ctx.revert();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSending(true);
 
-    // Simulate sending
-    setTimeout(() => {
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const name = String(formData.get("name") ?? "").trim();
+    const email = String(formData.get("email") ?? "").trim();
+    const message = String(formData.get("message") ?? "").trim();
+
+    try {
+      const response = await fetch(FORM_SUBMIT_ENDPOINT, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+          _subject: `New portfolio message from ${name || "a visitor"}`,
+          _captcha: false,
+          _template: "table",
+          _replyto: email,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+
       toast({
         title: "Message sent!",
         description: "Thanks for reaching out. I'll get back to you soon.",
       });
+      form.reset();
+    } catch {
+      toast({
+        title: "Could not send message",
+        description: "Please try again or email me directly at patelharsh12@zohomail.in.",
+      });
+    } finally {
       setSending(false);
-      (e.target as HTMLFormElement).reset();
-    }, 1200);
+    }
   };
 
   return (
@@ -163,6 +198,7 @@ const Contact = () => {
               {/* Name Input */}
               <div data-form-input className="relative group">
                 <Input
+                  name="name"
                   placeholder="Your Name"
                   required
                   onFocus={() => setFocused("name")}
@@ -179,6 +215,7 @@ const Contact = () => {
               {/* Email Input */}
               <div data-form-input className="relative group">
                 <Input
+                  name="email"
                   type="email"
                   placeholder="Your Email"
                   required
@@ -196,6 +233,7 @@ const Contact = () => {
               {/* Message Textarea */}
               <div data-form-input className="relative group">
                 <Textarea
+                  name="message"
                   placeholder="Your Message"
                   rows={5}
                   required
@@ -242,7 +280,7 @@ const Contact = () => {
             href="mailto:patelharsh12@zohomail.in"
             className="text-cyan-400 font-mono text-sm hover:underline transition-all duration-300 hover:text-cyan-300"
           >
-            patelharsh12@zohomail.in
+            {CONTACT_EMAIL}
           </a>
         </div>
       </div>

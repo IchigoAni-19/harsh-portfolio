@@ -1,73 +1,94 @@
-# Welcome to your Lovable project
 
-## Project info
+# Harsh Patel Portfolio
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+A modern developer portfolio single-page web app.
 
-## How can I edit this code?
+## What We Worked On
 
-There are several ways of editing your application.
+- Updated Developer Activity metrics:
+  - Major projects: 5
+  - Deployed projects: 4
+  - GitHub contributions: 200+
+  - DSA problems solved: 100+
+- Changed theme to darker purple/black space-themed design
+- Optimized production build settings in vite.config.ts
+- Removed unused files/components
+- Updated README
 
-**Use Lovable**
+## Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### Core
+- Vite
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Radix UI primitives
 
-Changes made via Lovable will be committed automatically to this repo.
+### Supporting Libraries
+- GSAP
+- Lucide React
+- React Router
+- TanStack Query
+- Sonner
+- next-themes
+- @splinetool/react-spline
+- react-hook-form
+- Zod
+- clsx
+- class-variance-authority
+- tailwind-merge
+- vaul
+- tailwindcss-animate
 
-**Use your preferred IDE**
+### Development & Testing
+- ESLint
+- Vitest
+- Testing Library
+- JSDOM
+- Vite React SWC plugin
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
+## Getting Started
+### Install
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+bun install
+# or
+npm install
 ```
 
-**Edit a file directly in GitHub**
+### Run locally
+```sh
+bun run dev
+# or
+npm run dev
+```
+App is available at http://localhost:8080
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Build for production
+```sh
+bun run build
+# or
+npm run build
+```
 
-**Use GitHub Codespaces**
+### Run tests
+```sh
+bun run test
+# or
+npm run test
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Lint
+```sh
+bun run lint
+# or
+npm run lint
+```
 
-## What technologies are used for this project?
+## Project Structure
+- src/components - UI sections and reusable components
+- src/pages - Route-level pages
+- src/data - Structured content
+- src/hooks - Custom React hooks
+- src/components/ui - shadcn/ui components
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)

@@ -3,18 +3,6 @@
 
 A modern developer portfolio single-page web app.
 
-## What We Worked On
-
-- Updated Developer Activity metrics:
-  - Major projects: 5
-  - Deployed projects: 4
-  - GitHub contributions: 200+
-  - DSA problems solved: 100+
-- Changed theme to darker purple/black space-themed design
-- Optimized production build settings in vite.config.ts
-- Removed unused files/components
-- Updated README
-
 ## Tech Stack
 
 ### Core

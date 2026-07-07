@@ -23,6 +23,26 @@ interface Planet {
   ringTilt: number;
 }
 
+interface Sun {
+  x: number;
+  y: number;
+  radius: number;
+  vx: number;
+  vy: number;
+  pulse: number;
+  pulseDir: number;
+}
+
+interface Galaxy {
+  x: number;
+  y: number;
+  radius: number;
+  tilt: number;
+  angle: number;
+  rotSpeed: number;
+  stars: { a: number; d: number; r: number; opacity: number }[];
+}
+
 const AnimatedBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -45,7 +65,7 @@ const AnimatedBackground = () => {
     resize();
     window.addEventListener("resize", resize);
 
-    const STAR_COUNT = 220;
+    const STAR_COUNT = 240;
     const stars: Star[] = Array.from({ length: STAR_COUNT }, () => ({
       x: Math.random() * W,
       y: Math.random() * H,
@@ -56,6 +76,17 @@ const AnimatedBackground = () => {
       opacityDir: Math.random() > 0.5 ? 1 : -1,
       twinkleSpeed: Math.random() * 0.008 + 0.003,
     }));
+
+    // Sun — large glowing ball drifting slowly
+    const sun: Sun = {
+      x: W * 0.08,
+      y: H * 0.12,
+      radius: 42,
+      vx: 0.008,
+      vy: 0.005,
+      pulse: 0,
+      pulseDir: 1,
+    };
 
     const planetDefs: Planet[] = [
       {
@@ -93,6 +124,36 @@ const AnimatedBackground = () => {
       },
     ];
 
+    // Galaxies — elliptical clusters of tiny dots
+    const galaxies: Galaxy[] = [
+      {
+        x: W * 0.35,
+        y: H * 0.3,
+        radius: 70,
+        tilt: 0.35,
+        angle: Math.PI * 0.15,
+        rotSpeed: 0.00015,
+        stars: Array.from({ length: 120 }, () => {
+          const a = Math.random() * Math.PI * 2;
+          const d = Math.pow(Math.random(), 0.6) * 70;
+          return { a, d, r: Math.random() * 0.8 + 0.2, opacity: Math.random() * 0.5 + 0.1 };
+        }),
+      },
+      {
+        x: W * 0.72,
+        y: H * 0.65,
+        radius: 55,
+        tilt: 0.25,
+        angle: -Math.PI * 0.3,
+        rotSpeed: -0.0001,
+        stars: Array.from({ length: 90 }, () => {
+          const a = Math.random() * Math.PI * 2;
+          const d = Math.pow(Math.random(), 0.7) * 55;
+          return { a, d, r: Math.random() * 0.7 + 0.15, opacity: Math.random() * 0.45 + 0.08 };
+        }),
+      },
+    ];
+
     const drawStar = (s: Star) => {
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
@@ -108,6 +169,57 @@ const AnimatedBackground = () => {
         ctx.lineWidth = 0.5;
         ctx.stroke();
       }
+    };
+
+    const drawSun = (s: Sun) => {
+      const r = s.radius + s.pulse * 4;
+
+      // Outer corona layers
+      for (let i = 4; i >= 1; i--) {
+        const coronaR = r * (1 + i * 0.8);
+        const alpha = 0.03 / i;
+        const grd = ctx.createRadialGradient(s.x, s.y, r * 0.5, s.x, s.y, coronaR);
+        grd.addColorStop(0, `rgba(255, 200, 80, ${alpha * 2})`);
+        grd.addColorStop(0.5, `rgba(255, 140, 30, ${alpha})`);
+        grd.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, coronaR, 0, Math.PI * 2);
+        ctx.fillStyle = grd;
+        ctx.fill();
+      }
+
+      // Main glow halo
+      const haloGrd = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, r * 3.5);
+      haloGrd.addColorStop(0, "rgba(255, 220, 100, 0.25)");
+      haloGrd.addColorStop(0.4, "rgba(255, 160, 40, 0.12)");
+      haloGrd.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, r * 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = haloGrd;
+      ctx.fill();
+
+      // Sun body
+      const bodyGrd = ctx.createRadialGradient(
+        s.x - r * 0.25, s.y - r * 0.25, r * 0.05,
+        s.x, s.y, r
+      );
+      bodyGrd.addColorStop(0, "rgba(255, 252, 220, 0.95)");
+      bodyGrd.addColorStop(0.4, "rgba(255, 220, 80, 0.9)");
+      bodyGrd.addColorStop(0.75, "rgba(255, 160, 30, 0.85)");
+      bodyGrd.addColorStop(1, "rgba(200, 80, 10, 0.7)");
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = bodyGrd;
+      ctx.fill();
+
+      // Surface sheen
+      const sheenGrd = ctx.createLinearGradient(s.x - r, s.y - r, s.x + r * 0.3, s.y);
+      sheenGrd.addColorStop(0, "rgba(255,255,255,0.18)");
+      sheenGrd.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = sheenGrd;
+      ctx.fill();
     };
 
     const lightenColor = (color: string, amount: number) => {
@@ -129,12 +241,8 @@ const AnimatedBackground = () => {
       ctx.fill();
 
       const bodyGrd = ctx.createRadialGradient(
-        p.x - p.radius * 0.3,
-        p.y - p.radius * 0.3,
-        p.radius * 0.1,
-        p.x,
-        p.y,
-        p.radius
+        p.x - p.radius * 0.3, p.y - p.radius * 0.3, p.radius * 0.1,
+        p.x, p.y, p.radius
       );
       bodyGrd.addColorStop(0, lightenColor(p.color, 0.35));
       bodyGrd.addColorStop(1, p.color);
@@ -160,12 +268,7 @@ const AnimatedBackground = () => {
         ctx.restore();
       }
 
-      const sheenGrd = ctx.createLinearGradient(
-        p.x - p.radius,
-        p.y - p.radius,
-        p.x + p.radius * 0.5,
-        p.y
-      );
+      const sheenGrd = ctx.createLinearGradient(p.x - p.radius, p.y - p.radius, p.x + p.radius * 0.5, p.y);
       sheenGrd.addColorStop(0, "rgba(255,255,255,0.12)");
       sheenGrd.addColorStop(1, "rgba(255,255,255,0)");
       ctx.beginPath();
@@ -174,10 +277,39 @@ const AnimatedBackground = () => {
       ctx.fill();
     };
 
+    const drawGalaxy = (g: Galaxy) => {
+      ctx.save();
+      ctx.translate(g.x, g.y);
+      ctx.rotate(g.angle);
+      ctx.scale(1, g.tilt);
+
+      // Center glow
+      const centerGrd = ctx.createRadialGradient(0, 0, 0, 0, 0, g.radius * 0.4);
+      centerGrd.addColorStop(0, "rgba(180, 160, 255, 0.18)");
+      centerGrd.addColorStop(0.5, "rgba(100, 80, 200, 0.06)");
+      centerGrd.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.beginPath();
+      ctx.arc(0, 0, g.radius * 0.4, 0, Math.PI * 2);
+      ctx.fillStyle = centerGrd;
+      ctx.fill();
+
+      // Galaxy stars
+      for (const s of g.stars) {
+        const x = Math.cos(s.a) * s.d;
+        const y = Math.sin(s.a) * s.d;
+        ctx.beginPath();
+        ctx.arc(x, y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(200, 190, 255, ${s.opacity})`;
+        ctx.fill();
+      }
+
+      ctx.restore();
+    };
+
     const draw = () => {
       ctx.clearRect(0, 0, W, H);
 
-      // Subtle nebula glows
+      // Nebula glows
       const nebula1 = ctx.createRadialGradient(W * 0.75, H * 0.2, 0, W * 0.75, H * 0.2, W * 0.35);
       nebula1.addColorStop(0, "rgba(60, 20, 120, 0.06)");
       nebula1.addColorStop(1, "rgba(0,0,0,0)");
@@ -190,6 +322,20 @@ const AnimatedBackground = () => {
       ctx.fillStyle = nebula2;
       ctx.fillRect(0, 0, W, H);
 
+      // Sun warm nebula hint
+      const sunNebula = ctx.createRadialGradient(sun.x, sun.y, 0, sun.x, sun.y, W * 0.3);
+      sunNebula.addColorStop(0, "rgba(255, 160, 20, 0.04)");
+      sunNebula.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = sunNebula;
+      ctx.fillRect(0, 0, W, H);
+
+      // Draw galaxies first (behind stars)
+      for (const g of galaxies) {
+        g.angle += g.rotSpeed;
+        drawGalaxy(g);
+      }
+
+      // Draw stars
       for (const s of stars) {
         s.opacity += s.twinkleSpeed * s.opacityDir;
         if (s.opacity > 0.85 || s.opacity < 0.1) s.opacityDir *= -1;
@@ -202,6 +348,17 @@ const AnimatedBackground = () => {
         drawStar(s);
       }
 
+      // Sun pulse
+      sun.pulse += 0.008 * sun.pulseDir;
+      if (sun.pulse > 1 || sun.pulse < 0) sun.pulseDir *= -1;
+      sun.x += sun.vx;
+      sun.y += sun.vy;
+      const sunMargin = sun.radius * 5;
+      if (sun.x < sunMargin || sun.x > W - sunMargin) sun.vx *= -1;
+      if (sun.y < sunMargin || sun.y > H - sunMargin) sun.vy *= -1;
+      drawSun(sun);
+
+      // Draw planets
       for (const p of planetDefs) {
         p.x += p.vx;
         p.y += p.vy;
@@ -224,13 +381,11 @@ const AnimatedBackground = () => {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0">
-      {/* Deep space base background */}
+      {/* Deep space base */}
       <div
         className="absolute inset-0"
         style={{ background: "linear-gradient(180deg, #05050f 0%, #080814 40%, #0a0818 70%, #06060f 100%)" }}
       />
-
-      {/* Stars + planets canvas */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0"

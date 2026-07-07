@@ -5,7 +5,7 @@ import gsap from "gsap";
 
 const FULL_NAME = "Harsh Patel";
 
-const Hero = () => {
+const Hero = ({ loaded = false }: { loaded?: boolean }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroContentRef = useRef<HTMLDivElement>(null);
   const splineContainerRef = useRef<HTMLDivElement>(null);
@@ -17,20 +17,21 @@ const Hero = () => {
 
   const [typed, setTyped] = useState("");
 
-  // Typewriter effect - full name "Harsh Patel"
+  // Typewriter effect - starts after preloader completes
   useEffect(() => {
+    if (!loaded) return;
+    setTyped("");
     let i = 0;
-    const delay = 800;
     const timer = setTimeout(() => {
       const interval = setInterval(() => {
         i += 1;
         setTyped(FULL_NAME.slice(0, i));
         if (i >= FULL_NAME.length) clearInterval(interval);
-      }, 120);
+      }, 110);
       return () => clearInterval(interval);
-    }, delay);
+    }, 400);
     return () => clearTimeout(timer);
-  }, []);
+  }, [loaded]);
 
   // Dynamic font size based on how many chars typed
   const dynamicFontSize = () => {
